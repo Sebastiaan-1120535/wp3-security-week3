@@ -47,15 +47,15 @@ env/
 # ------------------------------
 
 # SQLite databases
-*.db
-*.sqlite
-*.sqlite3
+#*.db
+#*.sqlite
+#*.sqlite3
 
 # Specific project database dirs
-data/
-data*/
-db/
-db*/
+#data/
+#data*/
+#db/
+#db*/
 
 # Backup / export files
 *.bak
