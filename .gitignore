@@ -1,0 +1,101 @@
+# ------------------------------
+# PYTHON
+# ------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.pkl
+*.pklz
+*.egg-info/
+*.egg
+*.whl
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dll
+*.dylib
+
+# Jupyter
+.ipynb_checkpoints/
+
+
+# ------------------------------
+# IDEs / Editors
+# ------------------------------
+
+# PyCharm / Webstorm / IntelliJ
+.idea/
+
+# VSCode
+.vscode/
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+
+# ------------------------------
+# DATABASES / DATA
+# ------------------------------
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Specific project database dirs
+data/
+data*/
+db/
+db*/
+
+# Backup / export files
+*.bak
+*.sql
+*.tmp
+
+
+# ------------------------------
+# FLASK / DJANGO / FASTAPI
+# ------------------------------
+
+# Flask instance
+instance/
+*.log
+
+# Django static & media
+staticfiles/
+media/
+
+# Any compiled templates
+*.pyc
+
+
+# ------------------------------
+# SYSTEM FILES
+# ------------------------------
+
+# macOS
+.DS_Store
+
+# Linux
+.Trash-*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.swp
+*.swo
+*.orig
+*.tmp
+*.temp
