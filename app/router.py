@@ -5,7 +5,7 @@ from app.models.user import User
 import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-DB_PATH = os.path.join(BASE_DIR, 'data', 'app.db')
+DB_PATH = os.path.join(BASE_DIR, 'data', 'prod.sqlite')
 
 app = Flask(
     __name__,
@@ -44,7 +44,7 @@ def dashboard():
     return render_dashboard_page(DB_PATH)
 
 
-@app.route('/partials/users')
+@app.route('/api/partial/users')
 def partials_users():
     user_m = User(DB_PATH)
     users = user_m.list_recent(limit=10)
