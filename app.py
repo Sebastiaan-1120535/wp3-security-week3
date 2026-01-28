@@ -1,4 +1,4 @@
-from app.app import app
+from app.router import app
 import socket, sys
 
 HOST = "127.0.0.1"

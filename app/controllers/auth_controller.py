@@ -13,7 +13,7 @@ def login_view(db_path: str):
         if user:
             session['user'] = user['email']
             session['role'] = user['role']
-            session['status'] = user['status']
+            session['user_id'] = user['user_id']
             flash('Inloggen gelukt.')
             return redirect(url_for('home'))
         else:
@@ -38,7 +38,7 @@ def register_view(db_path: str):
         if ok:
             session['user'] = result['email']
             session['role'] = result['role']
-            session['status'] = result['status']
+            session['user_id'] = result['user_id']
             flash('Registratie gelukt. Je bent ingelogd.')
             return redirect(url_for('home'))
         else:
@@ -51,6 +51,6 @@ def register_view(db_path: str):
 def logout_view(db_path: str):
     session.pop('user', None)
     session.pop('role', None)
-    session.pop('status', None)
+    session.pop('user_id', None)
     flash('Je bent uitgelogd.')
     return redirect(url_for('home'))
