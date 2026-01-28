@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}LeerDoelZicht{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        :root {
+            /* Brand anchors (Test-Correct inspired) */
+            --color-primary: #031F73;
+            --color-primary-hover: #052a9c;
+            --color-primary-light: #1e40af;
+            --color-accent: #3BBB54;
+            --color-accent-hover: #2ea346;
+
+            /* Neutrals */
+            --color-background: #F7F9FC;
+            --color-surface: #FFFFFF;
+            --color-border: #E5EAF2;
+
+            /* Text */
+            --color-text: #0F172A;
+            --color-text-muted: #5B677A;
+
+            /* Links / focus */
+            --color-link: #031F73;
+            --color-focus: #3BBB54;
+
+            /* Status (harmonized, not neon) */
+            --color-success: #3BBB54;
+            --color-warning: #F4B740;
+            --color-danger: #E5484D;
+            --color-info: #2F6FEB;
+
+            /* Subtle tints for backgrounds */
+            --tint-primary: rgba(3, 31, 115, 0.08);
+            --tint-accent: rgba(59, 187, 84, 0.10);
+
+            /* Chart colors */
+            --chart-series1: #031F73;
+            --chart-series2: #3BBB54;
+            --chart-series3: #5B677A;
+            --chart-series4: #94A3B8;
+        }
+
+        /* Component styles */
+        .btn-primary {
+            background-color: var(--color-primary-light);
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-accent);
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: var(--color-accent-hover);
+        }
+
+        .btn-outline {
+            background-color: var(--color-surface);
+            color: var(--color-primary);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .btn-outline:hover {
+            border-color: var(--color-primary);
+            background-color: var(--tint-primary);
+        }
+
+        .card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .badge-success {
+            background-color: rgba(59, 187, 84, 0.15);
+            color: #2a8a3e;
+        }
+        .badge-warning {
+            background-color: rgba(244, 183, 64, 0.2);
+            color: #92650a;
+        }
+        .badge-danger {
+            background-color: rgba(229, 72, 77, 0.15);
+            color: #c53030;
+        }
+        .badge-info {
+            background-color: rgba(47, 111, 235, 0.12);
+            color: #1e4fad;
+        }
+
+        /* Focus states for accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+        }
+    </style>
+    <script type="text/tailwindcss">
+        @theme {
+            --color-primary: var(--color-primary);
+            --color-primary-hover: var(--color-primary-hover);
+            --color-primary-light: var(--color-primary-light);
+            --color-accent: var(--color-accent);
+            --color-accent-hover: var(--color-accent-hover);
+            --color-surface: var(--color-surface);
+            --color-border: var(--color-border);
+            --color-success: var(--color-success);
+            --color-warning: var(--color-warning);
+            --color-danger: var(--color-danger);
+            --color-info: var(--color-info);
+        }
+    </script>
+</head>
+
+<body class="flex min-h-screen m-0 font-sans" style="background-color: var(--color-background); color: var(--color-text);">
+
+<header class="h-screen w-1/5 flex flex-col justify-between text-white sticky top-0" style="background-color: var(--color-primary);">
+    <div class="p-6 space-y-6">
+        <h1 class="text-2xl font-semibold">
+            <a href="/">LeerDoelZicht</a>
+        </h1>
+
+        {% set logged_in = session.get('user') is not none %}
+
+        <nav>
+            <ul class="flex flex-col gap-2">
+                {% if not logged_in %}
+                    <li><a href="/" class="block px-2 py-1 rounded hover:bg-white/10">Home</a></li>
+                {% endif %}
+
+                {% if logged_in %}
+                    <li><a href="/dashboard" class="block px-2 py-1 rounded hover:bg-white/10">Dashboard</a></li>
+                    <li class="mt-4 border-t border-white/20 pt-3">
+                        <a href="/logout" class="block px-2 py-1 rounded hover:bg-white/10">Uitloggen</a>
+                    </li>
+                {% else %}
+                    <li class="mt-4 border-t border-white/20 pt-3">
+                        <a href="/login" class="block px-2 py-1 rounded hover:bg-white/10">Inloggen</a>
+                        <a href="/registreren" class="block px-2 py-1 rounded hover:bg-white/10">Registreren</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="p-4 border-t border-white/20 text-sm text-white/70">
+        {% if session.get('user') %}
+            <div class="mb-4 text-white">Ingelogd als <strong>{{ session['user'] }}</strong></div>
+        {% endif %}
+        <p>&copy; 2026 LeerDoelZicht</p>
+    </div>
+</header>
+
+<main class="flex-1 p-10 overflow-y-auto">
+    {% block content %}{% endblock %}
+</main>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+            {% for m in messages %}
+                <div class="toast text-white px-4 py-3 rounded shadow-lg" style="background-color: var(--color-primary);">{{ m }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+
+</body>
+</html>

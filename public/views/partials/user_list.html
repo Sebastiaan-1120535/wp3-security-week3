@@ -1,0 +1,24 @@
+<table class="w-full border-collapse" style="background-color: var(--color-surface);">
+    <thead>
+    <tr>
+        <th class="px-3 py-2 text-left" style="border-bottom: 1px solid var(--color-border); background-color: var(--color-background);">ID</th>
+        <th class="px-3 py-2 text-left" style="border-bottom: 1px solid var(--color-border); background-color: var(--color-background);">E-mail</th>
+        <th class="px-3 py-2 text-left" style="border-bottom: 1px solid var(--color-border); background-color: var(--color-background);">Rol</th>
+        <th class="px-3 py-2 text-left" style="border-bottom: 1px solid var(--color-border); background-color: var(--color-background);">Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+        <tr>
+            <td class="px-3 py-2 font-bold" style="border-bottom: 1px solid var(--color-border);">{{ u['id'] }}</td>
+            <td class="px-3 py-2" style="border-bottom: 1px solid var(--color-border);">{{ u['email'] }}</td>
+            <td class="px-3 py-2" style="border-bottom: 1px solid var(--color-border);">{{ u['role'] }}</td>
+            <td class="px-3 py-2" style="border-bottom: 1px solid var(--color-border);">{{ u['status'] }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="4" class="px-3 py-2" style="border-bottom: 1px solid var(--color-border);">Geen gebruikers gevonden.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

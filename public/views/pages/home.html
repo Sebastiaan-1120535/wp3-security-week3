@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<section class="max-w-2xl mx-auto text-center">
+    <h1 class="text-4xl font-bold mb-6">Welkom bij LeerDoelZicht</h1>
+    <p class="text-lg mb-8" style="color: var(--color-text-muted);">Krijg inzicht in je kennisvoortgang door toetsresultaten visueel te bekijken en gerichte adviezen te ontvangen.</p>
+    
+    <div class="space-x-4">
+        <a href="/login" class="btn-primary inline-block">
+            Inloggen
+        </a>
+        <a href="/registreren" class="btn-outline inline-block">
+            Registreren
+        </a>
+    </div>
+</section>
+
+{% endblock %}
