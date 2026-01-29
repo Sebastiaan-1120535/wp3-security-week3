@@ -4,7 +4,7 @@
  * 
  * @async
  * @param {Promise<Response>} promise - A fetch promise that resolves to a Response object
- * @returns {Promise<{data: (Object|string|null), error: ({ success: boolean, status: string, statusText: string, message: string }|null), refresh: Promise<Function>}>} An object containing data, error, and refresh function
+ * @returns {Promise<{data: (Object|string|null), error: ({ success: boolean, status: string, statusText: string, message: string }|null)}>} An object containing data, error
  * 
  * @description
  * This function wraps a fetch promise and:
@@ -17,44 +17,33 @@ const catcher = async (promise) => {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const response = await promise
-    const refresh = async () => {
-        
-        const newResponse = fetch(response.url, { ...response });
-        const { data, error } = await catcher(newResponse);
-    
-        return { data, error };
-    }
 
     if (!response.ok) return {
-        data: null, 
+        data: null,
         error: {
             success: response.ok,
             status: response.status,
             statusText: response.statusText,
             message: `Laden mislukt`,
-        }, 
-        refresh
+        },
     };
 
     const contentType = response.headers.get("Content-Type");
 
-    if (contentType && contentType.includes("application/json")) return { 
-        data: await response.json(), 
-        error: null, 
-        refresh 
-    };
-    
-
-    if (contentType && contentType.includes("text/html")) return { 
-        data: await response.text(), 
-        error: null, 
-        refresh 
+    if (contentType && contentType.includes("application/json")) return {
+        data: await response.json(),
+        error: null,
     };
 
-    return { 
-        data: null, 
-        error: null, 
-        refresh 
+
+    if (contentType && contentType.includes("text/html")) return {
+        data: await response.text(),
+        error: null,
+    };
+
+    return {
+        data: null,
+        error: null,
     };
 }
 
@@ -96,10 +85,20 @@ export const useApiHandler = (url) => {
      * @param {RequestInit} options - Configuration options for the GET request
      * @param {string} [options.extends] - Additional path to append to the base URL
      * @param {Object} [options.headers] - Request headers
+     * @returns {Promise<{data: (Object|string|null), error: ({success: boolean, status: string, statusText: string, message: string}|null), refresh: () => Promise<{data: (Object|string|null), error: ({success: boolean, status: string, statusText: string, message: string}|null)}>}>} An object containing data, error, and refresh function
      */
-    const Get = async (options) => Send({
-        ...options, method: 'GET'
-    })
+    const Get = async (options) => {
+
+        const refresh = async () => await Send({
+            ...options, method: 'GET'
+        });
+        
+        const response = await Send({
+            ...options, method: 'GET'
+        });
+
+        return { ...response, refresh };
+    }
 
     /**
      * Sends a POST request to the API endpoint with JSON content-type.
