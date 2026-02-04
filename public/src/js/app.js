@@ -1,18 +1,17 @@
-function loadFragment(targetSelector, url) {
+import { useApiHandler } from './modules/apiHandler.js';
+
+async function loadFragment(targetSelector, url) {
   const target = document.querySelector(targetSelector);
   if (!target) return;
 
   target.innerHTML = '<div class="flex justify-center p-4"><div class="animate-spin h-6 w-6 border-2 rounded-full" style="border-color: var(--color-accent); border-top-color: transparent;"></div></div>';
 
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      target.innerHTML = html;
-    })
-    .catch(error => {
-      console.error('Load failed:', error);
-      target.innerHTML = '<p style="color: var(--color-danger);">Laden mislukt</p>';
-    });
+  const request = useApiHandler(url)
+  const { data, error } = await request.Get()
+
+  if (error) target.innerHTML = `<p style="color: var(--color-danger);">${error.message}</p>`;
+  else if (data) target.innerHTML = data;
+
 }
 
 document.addEventListener('click', function(e) {
