@@ -33,7 +33,7 @@ def render_dashboard_page(db_path: str) -> str:
         db = Database(db_path)
         with db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT student_id FROM students WHERE user_id = ?', (user_id,))
+            cur.execute('SELECT student_id FROM student WHERE user_id = ?', (user_id,))
             student_result = cur.fetchone()
             student_id = student_result[0] if student_result else None
 
