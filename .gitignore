@@ -52,8 +52,6 @@ env/
 *.sqlite3
 
 # Specific project database dirs
-data/
-data*/
 db/
 db*/
 
