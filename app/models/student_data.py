@@ -92,7 +92,7 @@ class StudentData:
                     st.first_name || ' ' || COALESCE(st.last_name, '') as name,
                     COUNT(DISTINCT sn.learning_goal_id) as goal_count,
                     COUNT(DISTINCT sn.snapshot_id) as snapshot_count
-                FROM students st
+                FROM student st
                 LEFT JOIN snapshots sn ON st.student_id = sn.student_id
                 GROUP BY st.student_id, st.first_name, st.last_name
                 ORDER BY st.first_name
