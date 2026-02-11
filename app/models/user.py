@@ -99,4 +99,3 @@ class User:
             cur = con.cursor()
             cur.execute('UPDATE "users" SET password = ? WHERE user_id = ?', (hashed, user_id))
             con.commit()
-
