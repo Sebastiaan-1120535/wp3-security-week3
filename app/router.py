@@ -1,12 +1,10 @@
 from flask import Flask, request, redirect, url_for, session, render_template, flash, jsonify
-from werkzeug.utils import secure_filename
 from app.controllers.dashboard_controller import render_dashboard_page
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
 from app.models.student_data import StudentData
-from data.importer import DataImporter
-from data.database import Database
 import os
+import json
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DB_PATH = os.path.join(BASE_DIR, 'data', 'prod.sqlite')
@@ -47,31 +45,6 @@ def dashboard():
         return redirect(url_for('login'))
     return render_dashboard_page(DB_PATH)
 
-
-@app.route('/upload-json', methods=['POST'])
-def upload_json():
-    if not session.get('user'):
-        return redirect(url_for('login'))
-
-    file = request.files.get('json_file')
-
-    if not file or not file.filename or not file.filename.lower().endswith('.json'):
-        flash('Ongeldig bestand (alleen .json toegestaan).')
-        return redirect(url_for('dashboard'))
-
-    upload_dir = os.path.join(BASE_DIR, 'data', 'uploads')
-    os.makedirs(upload_dir, exist_ok=True)
-
-    file_path = os.path.join(upload_dir, secure_filename(file.filename))
-    file.save(file_path)
-
-    try:
-        DataImporter(DB_PATH).import_json(file_path)
-        flash('Import gelukt.')
-    except Exception as e:
-        flash(f'Import mislukt: {e}')
-
-    return redirect(url_for('dashboard'))
 
 @app.route('/api/partial/users')
 def partials_users():
