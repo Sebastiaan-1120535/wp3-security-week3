@@ -3,6 +3,8 @@ from app.controllers.dashboard_controller import render_dashboard_page
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
 from app.models.teacher import Teacher
+from app.models.student import Student
+
 import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -56,6 +58,12 @@ def partials_teachers():
     teacher_m = Teacher(DB_PATH)
     teachers = teacher_m.list_recent(limit=10)
     return render_template('partials/teacher_list.html', teachers=teachers)
+
+@app.route('/api/partial/students')
+def partials_student():
+    student_m = Student(DB_PATH)
+    student = student_m.list_recent(limit=10)
+    return render_template('partials/student_list.html', students=student)
 
 
 if __name__ == '__main__':
