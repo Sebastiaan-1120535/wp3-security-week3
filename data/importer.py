@@ -9,37 +9,25 @@ class DataImporter:
         self.db_path = db_path
         self.con = sqlite3.connect(db_path)
         self.con.row_factory = sqlite3.Row
-        self.con.execute("PRAGMA foreign_keys = ON")
+        self.con.execute("PRAGMA journal_mode=WAL;")
+        self.con.execute("PRAGMA foreign_keys = ON;")
         self.cur = self.con.cursor()
 
     def import_json(self, json_file: str):
-        try:
-            with open(json_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
 
-            entries = data.get('entries', [])
-            print(f"Importing {len(entries)} entries...")
+        entries = data.get('entries', [])
 
-            for idx, entry in enumerate(entries, 1):
-                try:
-                    self._import_entry(entry)
-                    if idx % 10 == 0:
-                        print(f"  Processed {idx}/{len(entries)} entries...")
-                except Exception as e:
-                    print(f"ERROR in entry {idx}: {e}")
-                    self.con.rollback()
-                    raise
+        for idx, entry in enumerate(entries, 1):
+            self._import_entry(entry)
+            if idx % 10 == 0:
+                self.con.commit()
 
-            self.con.commit()
-            print(f"Successfully imported all {len(entries)} entries.")
-            self._print_summary()
+        self.con.commit()
+        self._print_summary()
+        self.con.close()
 
-        except Exception as e:
-            print(f"FATAL ERROR: {e}")
-            self.con.rollback()
-            raise
-        finally:
-            self.con.close()
 
     def _import_entry(self, entry: dict):
         student_data = entry.get('student', {})
