@@ -9,12 +9,12 @@ class Student:
     def find_by_id(self, student_id: int):
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT * FROM "Student" WHERE student_id = ?', (student_id,))
+            cur.execute('SELECT * FROM "students" WHERE student_id = ?', (student_id,))
             return cur.fetchone()
         
     def list_recent(self, limit=10):
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT * FROM "Student" ', ())
+            cur.execute('SELECT * FROM "students" ', ())
             return cur.fetchall() 
         
