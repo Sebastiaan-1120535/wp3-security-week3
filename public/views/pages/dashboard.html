@@ -1,19 +1,39 @@
-{% extends 'base/base.html' %}
-{% block title %}Dashboard - LeerDoelZicht{% endblock %}
-{% block content %}
+{% extends 'base/base.html' %} {% block title %}Dashboard - LeerDoelZicht{%
+endblock %} {% block content %}
 
 <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
 <section class="mt-8">
+  <div class="card">
+    <header class="flex items-center justify-between gap-4 mb-4">
+      <h3 class="text-xl font-semibold">Gebruikers</h3>
+      <button
+        type="button"
+        data-refresh="#users-list"
+        data-url="/api/partial/users"
+        class="btn-outline"
+      >
+        Ververs
+      </button>
+    </header>
+    <div id="users-list">{% include 'partials/user_list.html' %}</div>
+  </div>
+  <section class="mt-8">
     <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Gebruikers</h3>
-            <button type="button" data-refresh="#users-list" data-url="/api/partial/users" class="btn-outline">
-                Ververs
-            </button>
-        </header>
-        <div id="users-list">{% include 'partials/user_list.html' %}</div>
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Gebruikers</h3>
+        <button
+          type="button"
+          data-refresh="#teachers-list"
+          data-url="/api/partial/teachers"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="teachers-list">{% include 'partials/teacher_list.html' %}</div>
     </div>
-</section>
+  </section>
 
-{% endblock %}
+  {% endblock %}
+</section>

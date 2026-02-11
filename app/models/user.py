@@ -31,7 +31,7 @@ class User:
             cur.execute('SELECT * FROM "User" WHERE user_id = ?', (user_id,))
             return cur.fetchone()
 
-    def create_user(self, email: str, password: str, role: str = 'student'):
+    def create_user(self, email: str, password: str, role: str = 'teacher'):
         """Create a new user. Role must be 'student', 'teacher', or 'admin'."""
         hashed = generate_password_hash(password)
         try:
@@ -39,6 +39,8 @@ class User:
                 cur = con.cursor()
                 cur.execute(
                     'INSERT INTO "User" (email, password, role) VALUES (?, ?, ?)',
+                    (email, hashed, role),
+                    'INSERT INTO "Teacher" (first_name, last_name, user_id) VALUES (?, ?, ?)',
                     (email, hashed, role)
                 )
                 con.commit()

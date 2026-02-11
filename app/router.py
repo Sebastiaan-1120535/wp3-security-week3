@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for, session, render_template, f
 from app.controllers.dashboard_controller import render_dashboard_page
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
+from app.models.teacher import Teacher
 import os
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -49,6 +50,12 @@ def partials_users():
     user_m = User(DB_PATH)
     users = user_m.list_recent(limit=10)
     return render_template('partials/user_list.html', users=users)
+
+@app.route('/api/partial/teachers')
+def partials_teachers():
+    teacher_m = Teacher(DB_PATH)
+    teachers = teacher_m.list_recent(limit=10)
+    return render_template('partials/teacher_list.html', teachers=teachers)
 
 
 if __name__ == '__main__':
