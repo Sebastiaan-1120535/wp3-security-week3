@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for, session, render_template, flash
-from app.controllers.dashboard_controller import render_dashboard_page
+from app.controllers.dashboard_controller import render_dashboard_page, get_student_progress_api
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
 import os
@@ -49,6 +49,15 @@ def partials_users():
     user_m = User(DB_PATH)
     users = user_m.list_recent(limit=10)
     return render_template('partials/user_list.html', users=users)
+
+
+@app.route('/api/student/progress')
+def student_progress():
+    if not session.get('user'):
+        return 401
+    return get_student_progress_api(DB_PATH)
+
+
 
 
 if __name__ == '__main__':
