@@ -181,6 +181,9 @@ class DataImporter:
                 "CREATE INDEX IF NOT EXISTS idx_snapshots_learning_goal ON snapshots(learning_goal_id)"
             )
             self.cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_snapshots_at ON snapshots(at)"
+            )
+            self.cur.execute(
                 "CREATE INDEX IF NOT EXISTS idx_taxonomy_scores_snapshot ON taxonomy_scores(snapshot_id)"
             )
             self.cur.execute(
@@ -188,6 +191,9 @@ class DataImporter:
             )
             self.cur.execute(
                 "CREATE INDEX IF NOT EXISTS idx_learning_goals_subject ON learning_goals(subject_id)"
+            )
+            self.cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_students_user_id ON students(user_id)"
             )
 
             self.con.commit()
