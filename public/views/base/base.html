@@ -4,15 +4,19 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}LeerDoelZicht{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Zilla+Slab:wght@400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* Brand anchors (Test-Correct inspired) */
-            --color-primary: #031F73;
-            --color-primary-hover: #052a9c;
-            --color-primary-light: #1e40af;
-            --color-accent: #3BBB54;
-            --color-accent-hover: #2ea346;
+            /* Brand colors */
+            --color-primary: #004DF5;
+            --color-primary-hover: #0040cc;
+            --color-primary-light: #3370f7;
+            --color-accent: #36AF4E;
+            --color-accent-hover: #2d9642;
 
             /* Neutrals */
             --color-background: #F7F9FC;
@@ -38,10 +42,19 @@
             --tint-accent: rgba(59, 187, 84, 0.10);
 
             /* Chart colors */
-            --chart-series1: #031F73;
-            --chart-series2: #3BBB54;
+            --chart-series1: #004DF5;
+            --chart-series2: #36AF4E;
             --chart-series3: #5B677A;
             --chart-series4: #94A3B8;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Nunito', sans-serif;
+        }
+        body, p, span, a, li, td, th, input, button, label {
+            font-family: 'Zilla Slab', serif;
+            font-weight: 400;
         }
 
         /* Component styles */
