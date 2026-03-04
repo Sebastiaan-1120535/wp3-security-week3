@@ -1,6 +1,8 @@
 import json
 import sqlite3
+from app.models.user import User
 from pathlib import Path
+from werkzeug.security import generate_password_hash
 
 try:
     import ijson
@@ -8,6 +10,7 @@ try:
     HAS_IJSON = True
 except ImportError:
     HAS_IJSON = False
+
 
 
 class DataImporter:
@@ -305,19 +308,29 @@ class DataImporter:
                 self._import_snapshot(snapshot, student_id, lg_id, taxonomy_level_map)
 
     def _ensure_student(self, student_id: int, name: str) -> int:
-        if student_id in self._student_cache:
-            return student_id
 
         parts = name.split(" ", 1)
         first_name = parts[0]
         last_name = parts[1] if len(parts) > 1 else ""
 
+        hashed = generate_password_hash(f"{first_name}@test.nl")
+
+        self.cur.execute(
+            """INSERT OR IGNORE INTO users (email, password, role)
+               VALUES (?, ?, ?)""",
+            (f"{first_name}@test.nl", hashed, "student"),
+        )
+
+        user_id = self.cur.lastrowid
+
         self.cur.execute(
             """INSERT OR IGNORE INTO students (student_id, first_name, last_name, user_id, class_id)
-               VALUES (?, ?, ?, NULL, NULL)""",
-            (student_id, first_name, last_name),
+            VALUES (?, ?, ?, ?, NULL)""",
+            (student_id, first_name, last_name, user_id),
         )
+
         self._student_cache[student_id] = student_id
+
         return student_id
 
     def _ensure_subject(self, subject_id: int, name: str) -> int:
