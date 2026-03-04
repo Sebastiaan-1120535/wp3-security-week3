@@ -27,9 +27,23 @@
 </section>
 {% endif %}
 
-{% if progress %}
 <section class="mb-8">
     <div class="card">
+        <header class="flex items-center justify-between gap-4 mb-4">
+            <h3 class="text-xl font-semibold">Laatste Resultaten</h3>
+            <button type="button" id="refresh-latest-results" class="btn-outline">Ververs</button>
+        </header>
+        <div id="latest-results"></div>
+    </div>
+</section>
+
+<section class="mb-8">
+    <div class="card">
+        <header class="flex items-center justify-between gap-4 mb-4">
+            <h3 class="text-xl font-semibold">Voortgang Over Tijd</h3>
+            <button type="button" id="refresh-student-progress" class="btn-outline">Ververs</button>
+        </header>
+        <div id="student-progress"></div>
         <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
         <canvas id="chart-progress" class="w-full h-48 mx-auto" data-progress="{{ progress | selectattr('has_data') | list | tojson | e }}"></canvas>
     </div>
@@ -80,7 +94,6 @@
         <p class="text-slate-500">Geen resultaten beschikbaar. </p>
     </div>
 </section>
-{% endif %}
 
 
 <section class="mt-8">

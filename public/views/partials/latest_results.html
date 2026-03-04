@@ -1,0 +1,11 @@
+<style>
+    #results-list::-webkit-scrollbar { width: 6px; }
+    #results-list::-webkit-scrollbar-track { background: var(--color-background); border-radius: 3px; }
+    #results-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; min-height: 40px; max-height: 40px; height: 40px; }
+    #results-list::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+</style>
+<div id="results-list" class="flex flex-col gap-3 max-h-96 overflow-y-auto pr-1"></div>
+<div id="results-loader" class="hidden flex justify-center p-4">
+    <div class="animate-spin h-6 w-6 border-2 rounded-full" style="border-color: var(--color-accent); border-top-color: transparent;"></div>
+</div>
+<p id="results-empty" class="hidden" style="color: var(--color-text-muted);">Geen resultaten beschikbaar.</p>
