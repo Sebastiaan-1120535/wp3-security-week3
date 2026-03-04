@@ -1,5 +1,6 @@
-{% extends 'base/base.html' %} {% block title %}Dashboard - LeerDoelZicht{%
-endblock %} {% block content %}
+{% extends 'base/base.html' %} 
+{% block title %}Dashboard - LeerDoelZicht{%endblock %} 
+{% block content %}
 
 <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
@@ -24,101 +25,63 @@ endblock %} {% block content %}
     </form>
   </div>
 </section>
-{% endif %} {% if progress %}
+{% endif %}
+
+{% if progress %}
 <section class="mb-8">
-  <div class="card">
-    <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
-    <canvas id="chart-progress" class="w-full h-48 mx-auto"></canvas>
-  </div>
+    <div class="card">
+        <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
+        <canvas id="chart-progress" class="w-full h-48 mx-auto" data-progress="{{ progress | selectattr('has_data') | list | tojson | e }}"></canvas>
+    </div>
 </section>
 
-<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-  {% for item in progress %}
-  <div class="card">
-    <h4 class="font-semibold">{{ item.title }}</h4>
-    <p class="text-sm mb-2" style="color: var(--color-text-muted)">
-      {{ item.subject }}
-    </p>
+{% set subjects = progress | map(attribute='subject') | unique | list %}
+{% for subject in subjects %}
+<div class="card mb-6">
+    <details open>
+        <summary class="cursor-pointer flex items-center justify-between pb-4 border-b border-slate-200">
+            <h3 class="text-xl font-semibold">{{ subject }}</h3>
+        </summary>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+            {% for item in progress if item.subject == subject %}
+            <div class="p-4 rounded-lg bg-slate-100 border border-slate-200">
+                <h4 class="font-semibold mb-2">{{ item.title }}</h4>
 
-    {% if item.has_data %}
-    <div class="flex items-center gap-2 mb-2">
-      <span
-        class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}"
-      >
-        {{ item.score }}
-      </span>
-      <span class="text-sm" style="color: var(--color-text-muted)"
-        >({{ item.score_numeric }}%)</span
-      >
-    </div>
+                {% if item.has_data %}
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ item.score }}
+                    </span>
+                    <span class="text-sm text-slate-500">({{ item.score_numeric }}%)</span>
+                </div>
 
-    {% if item.keywords %}
-    <div class="flex flex-wrap gap-1">
-      {% for kw in item.keywords %}
-      <span class="badge badge-info">{{ kw }}</span>
-      {% endfor %}
-    </div>
-    {% endif %} {% else %}
-    <p class="text-sm" style="color: var(--color-text-muted)">
-      Geen data beschikbaar
-    </p>
-    {% endif %}
-  </div>
-  {% endfor %}
-</section>
+                {% if item.keywords %}
+                <div class="flex flex-wrap gap-1">
+                    {% for kw in item.keywords %}
+                    <span class="badge badge-info">{{ kw }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const ctx = document.getElementById('chart-progress').getContext('2d');
-      const progressWithData = {
-      {
-          progress | selectattr('has_data') | list | tojson
-      }
-  }
-      ;
-      const labels = progressWithData.map(item => item.title);
-      const data = progressWithData.map(item => item.score_numeric);
-      const scores = progressWithData.map(item => item.score);
+                {% else %}
+                <p class="text-sm text-slate-500">Geen data beschikbaar</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </details>
+</div>
+{% endfor %}
 
-      const backgroundColors = scores.map(score => {
-          if (score === 'Sterk') return '#22c55e';
-          if (score === 'Voldoende') return '#eab308';
-          return '#ef4444';
-      });
-
-      if (labels.length === 0) {
-          ctx.canvas.parentElement.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">Geen data beschikbaar</p>';
-      } else {
-          new Chart(ctx, {
-              type: 'bar',
-              data: {
-                  labels: labels,
-                  datasets: [{
-                      label: 'Score (%)',
-                      data: data,
-                      backgroundColor: backgroundColors,
-                      borderRadius: 4,
-                  }]
-              },
-              options: {
-                  scales: {
-                      y: {beginAtZero: true, max: 100, ticks: {stepSize: 10}}
-                  },
-                  responsive: true,
-                  plugins: {legend: {display: false}}
-              }
-          });
-      }
-  });
-</script>
 
 {% else %}
 <section class="mb-8">
-  <div class="card">
-    <p style="color: var(--color-text-muted)">Geen resultaten beschikbaar.</p>
-  </div>
+    <div class="card">
+        <p class="text-slate-500">Geen resultaten beschikbaar. </p>
+    </div>
 </section>
 {% endif %}
+
 
 <section class="mt-8">
   <div class="card">
@@ -135,6 +98,8 @@ endblock %} {% block content %}
     </header>
     <div id="users-list">{% include 'partials/user_list.html' %}</div>
   </div>
+
+
   {% if role == 'teacher' %}
   <section class="mt-8">
     <div class="card">
@@ -152,7 +117,8 @@ endblock %} {% block content %}
       <div id="classes-list">{% include 'partials/classes_list.html' %}</div>
     </div>
   </section>
-  {% endif %}
+  {% endif %} 
+
   <section class="mt-8">
     <div class="card">
       <header class="flex items-center justify-between gap-4 mb-4">
