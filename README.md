@@ -9,3 +9,9 @@ Bronnen Sjoerd
 Bronnen Roland
 - Use JSDOC. (n.d.). https://jsdoc.app/tags-typedef
 - Use JSDOC: Index. (n.d.). https://jsdoc.app/
+
+Bronnen Sebastiaan
+- https://github.com/Rac-Software-Development/wp2-2025-mvc-1a1
+We hebben de structuur van wp2 overgekopieerd naar dit project, vandaar ook de grootte "Big Bang" commit aan het begin van dit project.
+
+- https://stackoverflow.com/questions/15181286/how-to-implement-an-endless-infinite-scroll-within-a-div-in-javascript-jquery
