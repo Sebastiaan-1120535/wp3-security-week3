@@ -5,103 +5,118 @@ endblock %} {% block content %}
 
 {% if role == 'teacher' %}
 <section class="mb-8">
-    <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
-        <form action="/import" method="post" enctype="multipart/form-data" class="flex items-center gap-4">
-            <input type="file" name="file" accept=".json" required class="flex-1 border border-primary rounded px-3 py-2">
-            <button type="submit" class="btn-primary">Importeer JSON</button>
-        </form>
-    </div>
+  <div class="card">
+    <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
+    <form
+      action="/import"
+      method="post"
+      enctype="multipart/form-data"
+      class="flex items-center gap-4"
+    >
+      <input
+        type="file"
+        name="file"
+        accept=".json"
+        required
+        class="flex-1 border border-primary rounded px-3 py-2"
+      />
+      <button type="submit" class="btn-primary">Importeer JSON</button>
+    </form>
+  </div>
 </section>
-{% endif %}
-
-{% if progress %}
+{% endif %} {% if progress %}
 <section class="mb-8">
-    <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
-        <canvas id="chart-progress" class="w-full h-48 mx-auto"></canvas>
-    </div>
+  <div class="card">
+    <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
+    <canvas id="chart-progress" class="w-full h-48 mx-auto"></canvas>
+  </div>
 </section>
 
 <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-    {% for item in progress %}
-    <div class="card">
-        <h4 class="font-semibold">{{ item.title }}</h4>
-        <p class="text-sm mb-2" style="color: var(--color-text-muted);">{{ item.subject }}</p>
+  {% for item in progress %}
+  <div class="card">
+    <h4 class="font-semibold">{{ item.title }}</h4>
+    <p class="text-sm mb-2" style="color: var(--color-text-muted)">
+      {{ item.subject }}
+    </p>
 
-        {% if item.has_data %}
-        <div class="flex items-center gap-2 mb-2">
-            <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
-                {{ item.score }}
-            </span>
-            <span class="text-sm" style="color: var(--color-text-muted);">({{ item.score_numeric }}%)</span>
-        </div>
-
-        {% if item.keywords %}
-        <div class="flex flex-wrap gap-1">
-            {% for kw in item.keywords %}
-            <span class="badge badge-info">{{ kw }}</span>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% else %}
-        <p class="text-sm" style="color: var(--color-text-muted);">Geen data beschikbaar</p>
-        {% endif %}
+    {% if item.has_data %}
+    <div class="flex items-center gap-2 mb-2">
+      <span
+        class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}"
+      >
+        {{ item.score }}
+      </span>
+      <span class="text-sm" style="color: var(--color-text-muted)"
+        >({{ item.score_numeric }}%)</span
+      >
     </div>
-    {% endfor %}
+
+    {% if item.keywords %}
+    <div class="flex flex-wrap gap-1">
+      {% for kw in item.keywords %}
+      <span class="badge badge-info">{{ kw }}</span>
+      {% endfor %}
+    </div>
+    {% endif %} {% else %}
+    <p class="text-sm" style="color: var(--color-text-muted)">
+      Geen data beschikbaar
+    </p>
+    {% endif %}
+  </div>
+  {% endfor %}
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('chart-progress').getContext('2d');
-        const progressWithData = {
-        {
-            progress | selectattr('has_data') | list | tojson
-        }
-    }
-        ;
-        const labels = progressWithData.map(item => item.title);
-        const data = progressWithData.map(item => item.score_numeric);
-        const scores = progressWithData.map(item => item.score);
+  document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById('chart-progress').getContext('2d');
+      const progressWithData = {
+      {
+          progress | selectattr('has_data') | list | tojson
+      }
+  }
+      ;
+      const labels = progressWithData.map(item => item.title);
+      const data = progressWithData.map(item => item.score_numeric);
+      const scores = progressWithData.map(item => item.score);
 
-        const backgroundColors = scores.map(score => {
-            if (score === 'Sterk') return '#22c55e';
-            if (score === 'Voldoende') return '#eab308';
-            return '#ef4444';
-        });
+      const backgroundColors = scores.map(score => {
+          if (score === 'Sterk') return '#22c55e';
+          if (score === 'Voldoende') return '#eab308';
+          return '#ef4444';
+      });
 
-        if (labels.length === 0) {
-            ctx.canvas.parentElement.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">Geen data beschikbaar</p>';
-        } else {
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Score (%)',
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderRadius: 4,
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: true, max: 100, ticks: {stepSize: 10}}
-                    },
-                    responsive: true,
-                    plugins: {legend: {display: false}}
-                }
-            });
-        }
-    });
+      if (labels.length === 0) {
+          ctx.canvas.parentElement.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">Geen data beschikbaar</p>';
+      } else {
+          new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: 'Score (%)',
+                      data: data,
+                      backgroundColor: backgroundColors,
+                      borderRadius: 4,
+                  }]
+              },
+              options: {
+                  scales: {
+                      y: {beginAtZero: true, max: 100, ticks: {stepSize: 10}}
+                  },
+                  responsive: true,
+                  plugins: {legend: {display: false}}
+              }
+          });
+      }
+  });
 </script>
 
 {% else %}
 <section class="mb-8">
-    <div class="card">
-        <p style="color: var(--color-text-muted);">Geen resultaten beschikbaar. </p>
-    </div>
+  <div class="card">
+    <p style="color: var(--color-text-muted)">Geen resultaten beschikbaar.</p>
+  </div>
 </section>
 {% endif %}
 
@@ -120,6 +135,24 @@ endblock %} {% block content %}
     </header>
     <div id="users-list">{% include 'partials/user_list.html' %}</div>
   </div>
+  {% if role == 'teacher' %}
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Mijn Klassen</h3>
+        <button
+          type="button"
+          data-refresh="#classes-list"
+          data-url="/api/partial/classes"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="classes-list">{% include 'partials/classes_list.html' %}</div>
+    </div>
+  </section>
+  {% endif %}
   <section class="mt-8">
     <div class="card">
       <header class="flex items-center justify-between gap-4 mb-4">

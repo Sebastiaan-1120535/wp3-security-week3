@@ -16,3 +16,9 @@ class Classes:
             cur = con.cursor()
             cur.execute('SELECT * FROM "classes"', ())
             return cur.fetchall()
+    
+    def find_by_teacher_id(self, teacher_id: int):
+        with self.db.connect() as con:
+            cur = con.cursor()
+            cur.execute('SELECT * FROM "classes" WHERE teacher_id = ?', (teacher_id,))
+            return cur.fetchall()

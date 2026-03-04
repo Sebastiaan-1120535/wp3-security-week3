@@ -16,5 +16,12 @@ class Teacher:
         with self.db.connect() as con:
             cur = con.cursor()
             cur.execute('SELECT * FROM "teachers" ', ())
-            return cur.fetchall() 
+            return cur.fetchall()
+    
+    def find_by_user_id(self, user_id: int):
+        """Return the teacher row associated with a given users.user_id."""
+        with self.db.connect() as con:
+            cur = con.cursor()
+            cur.execute('SELECT * FROM "teachers" WHERE user_id = ?', (user_id,))
+            return cur.fetchone()
         
