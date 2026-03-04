@@ -1,8 +1,8 @@
 import json
 import sqlite3
-from app.models.user import User
 from pathlib import Path
 from werkzeug.security import generate_password_hash
+import random
 
 try:
     import ijson
@@ -11,7 +11,29 @@ try:
 except ImportError:
     HAS_IJSON = False
 
+CLASSES = [
+    {
+        "id": 1,
+        "name": "1A",
+        "teachter_id": 1,   
+    },
+    {
+        "id": 2,
+        "name": "1B",
+        "teachter_id": 2,
+    }
+]
 
+TEACHERS = [
+    {
+        "id": 1,
+        "name": "sarah",
+    },
+    {
+        "id": 2,
+        "name": "michael",
+    }
+]
 
 class DataImporter:
     BATCH_SIZE = 1000
@@ -22,6 +44,8 @@ class DataImporter:
         self.cur = None
         self._student_cache = {}
         self._subject_cache = {}
+        self._teacher_cache = {}
+        self._class_cache = {}
         self._taxonomy_level_cache = {}
         self._learning_goal_cache = set()
         self._keyword_cache = set()
@@ -41,6 +65,35 @@ class DataImporter:
             self.con.close()
             self.con = None
             self.cur = None
+
+    def clean_up_database(self):
+        self._connect()
+        try:
+
+            self._student_cache = {}
+            self._subject_cache = {}
+            self._teacher_cache = {}
+            self._class_cache = {}
+            self._taxonomy_level_cache = {}
+            self._learning_goal_cache = set()
+            self._keyword_cache = set()
+
+            self.cur.execute("DELETE FROM classes")
+            self.cur.execute("DELETE FROM keywords")
+            self.cur.execute("DELETE FROM learning_goals")
+            self.cur.execute("DELETE FROM snapshots")
+            self.cur.execute("DELETE FROM sources")
+            self.cur.execute("DELETE FROM students")
+            self.cur.execute("DELETE FROM subjects")
+            self.cur.execute("DELETE FROM taxonomy_levels")
+            self.cur.execute("DELETE FROM taxonomy_scores")
+            self.cur.execute("DELETE FROM teachers")
+            self.cur.execute("DELETE FROM users")
+            self.con.commit()
+
+        finally:
+            print("tabels geleegd, klaar voor nieuwe import")
+            self._close()
 
     def init_schema(self):
         self._connect()
@@ -275,10 +328,19 @@ class DataImporter:
             self.con.commit()
 
     def _import_entry(self, entry: dict):
+        
         student_data = entry.get("student", {})
         subject_data = entry.get("subject", {})
+
         learning_goals = entry.get("learningGoals", [])
         taxonomy_scale = entry.get("taxonomyScale", [])
+
+
+        for teacher in TEACHERS:
+            self._ensure_teacher(teacher.get("id", {}), teacher.get("name", "Unknown"))
+
+        for cls in CLASSES:
+            self._ensure_class(cls.get("id", {}), cls.get("name", "Unknown"), cls.get("teachter_id", {}))
 
         student_id = self._ensure_student(
             student_data.get("id"), student_data.get("name", "Unknown")
@@ -307,29 +369,82 @@ class DataImporter:
             for snapshot in snapshots:
                 self._import_snapshot(snapshot, student_id, lg_id, taxonomy_level_map)
 
+    def _ensure_teacher(self, teacher_id: int, name: str):
+
+        if teacher_id in self._teacher_cache:
+            return 
+
+        email = f"{name}@test.nl"
+        password_hash = generate_password_hash(email)
+
+        if self.cur:
+
+            self.cur.execute(
+                """INSERT OR IGNORE INTO users (email, password, role)
+                VALUES (?, ?, ?)""",
+                (email, password_hash, "teacher"),
+            )
+
+            user_id = self.cur.lastrowid
+            if user_id is None:
+                return
+
+            self.cur.execute(
+                """INSERT OR IGNORE INTO teachers (first_name, last_name, user_id)
+                VALUES (?, ?, ?)""",
+                (name, "", user_id),
+            )
+
+            self._teacher_cache[teacher_id] = teacher_id
+
+    def _ensure_class(self, class_id: int, name: str, teacher_id: int):
+
+        if class_id in self._class_cache:
+            return 
+
+        if self.cur:
+
+            self.cur.execute(
+                """INSERT OR IGNORE INTO classes (class_id, name, teacher_id)
+                VALUES (?, ?, ?)""",
+                (class_id, name, teacher_id),
+            )
+
+            self._class_cache[class_id] = class_id
+        
+    
     def _ensure_student(self, student_id: int, name: str) -> int:
 
-        parts = name.split(" ", 1)
-        first_name = parts[0]
-        last_name = parts[1] if len(parts) > 1 else ""
+        if student_id in self._student_cache:
+            return student_id
+        
+        if self.cur:
 
-        hashed = generate_password_hash(f"{first_name}@test.nl")
+            parts = name.split(" ", 1)
+            first_name = parts[0]
+            last_name = parts[1] if len(parts) > 1 else ""
 
-        self.cur.execute(
-            """INSERT OR IGNORE INTO users (email, password, role)
-               VALUES (?, ?, ?)""",
-            (f"{first_name}@test.nl", hashed, "student"),
-        )
+            hashed = generate_password_hash(f"{first_name}@test.nl")
 
-        user_id = self.cur.lastrowid
+            self.cur.execute(
+                """INSERT OR IGNORE INTO users (email, password, role)
+                VALUES (?, ?, ?)""",
+                (f"{first_name}@test.nl", hashed, "student"),
+            )
 
-        self.cur.execute(
-            """INSERT OR IGNORE INTO students (student_id, first_name, last_name, user_id, class_id)
-            VALUES (?, ?, ?, ?, NULL)""",
-            (student_id, first_name, last_name, user_id),
-        )
+            if self.cur:
+                user_id = self.cur.lastrowid
+        
+                class_ids = [cls.get("id") for cls in CLASSES]
+                class_id = random.choice(class_ids)
 
-        self._student_cache[student_id] = student_id
+                self.cur.execute(
+                    """INSERT OR IGNORE INTO students (student_id, first_name, last_name, user_id, class_id)
+                    VALUES (?, ?, ?, ?, ?)""",
+                    (student_id, first_name, last_name, user_id, class_id),
+                )
+
+            self._student_cache[student_id] = student_id
 
         return student_id
 
@@ -427,8 +542,15 @@ class DataImporter:
         return snapshot_id
 
     def _print_summary(self):
+
+        self.cur.execute("SELECT COUNT(*) FROM teachers")
+        teachers = self.cur.fetchone()[0]
+
         self.cur.execute("SELECT COUNT(*) FROM students")
         students = self.cur.fetchone()[0]
+
+        self.cur.execute("SELECT COUNT(*) FROM classes")
+        classes = self.cur.fetchone()[0]
 
         self.cur.execute("SELECT COUNT(*) FROM subjects")
         subjects = self.cur.fetchone()[0]
@@ -440,5 +562,5 @@ class DataImporter:
         scores = self.cur.fetchone()[0]
 
         print(
-            f"Import voltooid: {students} students, {subjects} subjects, {snapshots} snapshots, {scores} scores"
+            f"Import voltooid: {teachers} teachers, {students} students, {classes} classes, {subjects} subjects, {snapshots} snapshots, {scores} scores"
         )

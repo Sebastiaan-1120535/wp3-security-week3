@@ -6,14 +6,8 @@ from data.importer import DataImporter
 import os
 import tempfile
 
-from data.database import Database
-
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DB_PATH = os.path.join(BASE_DIR, 'data', 'prod.sqlite')
-
-db = Database(DB_PATH)
-
-db.setup()
 
 app = Flask(
     __name__,
