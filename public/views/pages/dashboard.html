@@ -20,7 +20,7 @@
 <section class="mb-8">
     <div class="card">
         <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
-        <canvas id="chart-progress" class="w-full h-48 mx-auto"></canvas>
+        <canvas id="chart-progress" class="w-full h-48 mx-auto" data-progress="{{ progress | selectattr('has_data') | list | tojson | e }}"></canvas>
     </div>
 </section>
 
@@ -53,50 +53,6 @@
     {% endfor %}
 </section>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('chart-progress').getContext('2d');
-        const progressWithData = {
-        {
-            progress | selectattr('has_data') | list | tojson
-        }
-    }
-        ;
-        const labels = progressWithData.map(item => item.title);
-        const data = progressWithData.map(item => item.score_numeric);
-        const scores = progressWithData.map(item => item.score);
-
-        const backgroundColors = scores.map(score => {
-            if (score === 'Sterk') return '#22c55e';
-            if (score === 'Voldoende') return '#eab308';
-            return '#ef4444';
-        });
-
-        if (labels.length === 0) {
-            ctx.canvas.parentElement.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">Geen data beschikbaar</p>';
-        } else {
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Score (%)',
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderRadius: 4,
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: true, max: 100, ticks: {stepSize: 10}}
-                    },
-                    responsive: true,
-                    plugins: {legend: {display: false}}
-                }
-            });
-        }
-    });
-</script>
 
 {% else %}
 <section class="mb-8">
