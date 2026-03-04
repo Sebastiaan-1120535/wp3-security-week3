@@ -1,0 +1,88 @@
+<div class="classes-container">
+  {% if classes %} {% for cls in classes %}
+  <div class="class-card">
+    <h3>{{ cls['name'] }}</h3>
+    <p><strong>Class ID:</strong> {{ cls['class_id'] }}</p>
+    <p><a href="/class/{{ cls['class_id'] }}">Bekijk klas</a></p>
+
+    <div class="students-section">
+      <h4>Students</h4>
+      {% if cls.students %}
+      <ul class="student-list">
+        {% for student in cls.students %}
+        <li>
+          <strong
+            >{{ student['first_name'] }} {{ student['last_name'] }}</strong
+          >
+          <span class="student-id">ID: {{ student['student_id'] }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="no-students">Geen student in deze klas</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <p class="no-classes">Geen klassen gevonden</p>
+  {% endif %}
+</div>
+
+<style>
+  .classes-container {
+    padding: 20px;
+  }
+
+  .class-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+  }
+
+  .class-card h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .students-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  .students-section h4 {
+    margin-top: 0;
+    color: #555;
+  }
+
+  .student-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .student-list li {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .student-list li:last-child {
+    border-bottom: none;
+  }
+
+  .student-id {
+    font-size: 0.85em;
+    color: #999;
+  }
+
+  .no-students,
+  .no-classes {
+    color: #999;
+    font-style: italic;
+  }
+</style>
