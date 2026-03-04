@@ -10,25 +10,25 @@ class User:
     def count_all(self) -> int:
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT COUNT(*) AS c FROM "User"')
+            cur.execute('SELECT COUNT(*) AS c FROM "users"')
             return cur.fetchone()[0]
 
     def list_recent(self, limit=10):
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT user_id, email, role FROM "User" ORDER BY user_id DESC LIMIT ?', (limit,))
+            cur.execute('SELECT user_id, email, role FROM "users" ORDER BY user_id DESC LIMIT ?', (limit,))
             return cur.fetchall()
 
     def find_by_email(self, email: str):
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT * FROM "User" WHERE email = ?', (email,))
+            cur.execute('SELECT * FROM "users" WHERE email = ?', (email,))
             return cur.fetchone()
 
     def find_by_id(self, user_id: int):
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('SELECT * FROM "User" WHERE user_id = ?', (user_id,))
+            cur.execute('SELECT * FROM "users" WHERE user_id = ?', (user_id,))
             return cur.fetchone()
 
     def create_user(self, email: str, password: str, role: str = 'student'):
@@ -38,7 +38,7 @@ class User:
             with self.db.connect() as con:
                 cur = con.cursor()
                 cur.execute(
-                    'INSERT INTO "User" (email, password, role) VALUES (?, ?, ?)',
+                    'INSERT INTO "users" (email, password, role) VALUES (?, ?, ?)',
                     (email, hashed, role)
                 )
                 con.commit()
@@ -72,7 +72,7 @@ class User:
         with self.db.connect() as con:
             cur = con.cursor()
             cur.execute(
-                'DELETE FROM "User" WHERE user_id = ?',
+                'DELETE FROM "users" WHERE user_id = ?',
                 (user_id,)
             )
             con.commit()
@@ -83,7 +83,7 @@ class User:
             with self.db.connect() as con:
                 cur = con.cursor()
                 cur.execute(
-                    'UPDATE "User" SET email = ?, role = ? WHERE user_id = ?',
+                    'UPDATE "users" SET email = ?, role = ? WHERE user_id = ?',
                     (email, role, user_id)
                 )
                 con.commit()
@@ -97,6 +97,5 @@ class User:
         hashed = generate_password_hash(password)
         with self.db.connect() as con:
             cur = con.cursor()
-            cur.execute('UPDATE "User" SET password = ? WHERE user_id = ?', (hashed, user_id))
+            cur.execute('UPDATE "users" SET password = ? WHERE user_id = ?', (hashed, user_id))
             con.commit()
-
