@@ -1,0 +1,18 @@
+{% if subjects %}
+<div class="mb-4">
+    <select id="subject-select" class="border rounded px-3 py-2" style="border-color: var(--color-border);">
+        <option value="">Alle vakken</option>
+        {% for s in subjects %}
+        <option value="{{ s.subject_id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+{% if chart_data and chart_data.datasets %}
+<div style="position: relative; height: 300px; width: 100%;">
+    <canvas id="chart-progress-over-time" data-chart='{{ chart_data|tojson }}'></canvas>
+</div>
+{% else %}
+<p style="color: var(--color-text-muted); text-align: center;">Geen voortgangsdata beschikbaar.</p>
+{% endif %}

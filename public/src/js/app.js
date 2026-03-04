@@ -1,4 +1,6 @@
 import { useApiHandler } from './modules/apiHandler.js';
+import { loadLatestResults } from './modules/latestResults.js';
+import { loadStudentProgress } from './modules/studentProgress.js';
 
 async function loadFragment(targetSelector, url) {
   const target = document.querySelector(targetSelector);
@@ -25,8 +27,19 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// Toast auto-dismiss after 3 seconds
 document.addEventListener('DOMContentLoaded', function() {
+  loadLatestResults('#latest-results');
+  loadStudentProgress('#student-progress');
+  loadFragment('#student-goals', '/api/partial/student-goals');
+  loadFragment('#students-list', '/api/partial/students');
+  loadFragment('#teachers-list', '/api/partial/teachers');
+
+  document.getElementById('refresh-latest-results')?.addEventListener('click', () => loadLatestResults('#latest-results'));
+  document.getElementById('refresh-student-progress')?.addEventListener('click', () => loadStudentProgress('#student-progress'));
+  document.getElementById('refresh-student-goals')?.addEventListener('click', () => loadFragment('#student-goals', '/api/partial/student-goals'));
+  document.getElementById('refresh-students-list')?.addEventListener('click', () => loadFragment('#students-list', '/api/partial/students'));
+  document.getElementById('refresh-teachers-list')?.addEventListener('click', () => loadFragment('#teachers-list', '/api/partial/teachers'));
+
   const toasts = document.querySelectorAll('.toast');
   toasts.forEach(toast => {
     setTimeout(() => {
