@@ -1,5 +1,9 @@
 from flask import render_template, jsonify, session
 from app.models.user import User
+from app.models.teacher import Teacher
+from app.models.classes import Classes
+from app.models.student import Student
+
 from data.database import Database
 
 
@@ -81,15 +85,38 @@ def get_student_progress(db_path: str, user_id: int) -> list:
 def render_dashboard_page(db_path: str) -> str:
     user_m = User(db_path)
     users = user_m.list_recent(limit=10)
+    teacher_m = Teacher(db_path)
+    teachers = teacher_m.list_recent(limit=10)
 
     role = session.get('role', 'student')
     user_id = session.get('user_id')
+
+    classes = []
+    if role == 'teacher' and user_id:
+        # use cached teacher_id if stored in session
+        teacher_id = session.get('teacher_id')
+        if not teacher_id:
+            teacher_m = Teacher(db_path)
+            teacher_row = teacher_m.find_by_user_id(user_id)
+            if teacher_row:
+                teacher_id = teacher_row['teacher_id']
+                session['teacher_id'] = teacher_id
+        if teacher_id:
+            class_m = Classes(db_path)
+            classes = class_m.find_by_teacher_id(teacher_id)
+            student_m = Student(db_path)
+            enriched = []
+            for cls in classes:
+                c = dict(cls)
+                c['students'] = student_m.find_by_class_id(c['class_id'])
+                enriched.append(c)
+            classes = enriched
 
     progress = []
     if user_id:
         progress = get_student_progress(db_path, user_id)
 
-    return render_template('pages/dashboard.html', users=users, role=role, progress=progress)
+    return render_template('pages/dashboard.html', users=users, role=role, progress=progress, classes=classes)
 
 
 def get_student_progress_api(db_path: str):

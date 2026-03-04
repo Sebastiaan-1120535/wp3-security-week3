@@ -1,18 +1,29 @@
-{% extends 'base/base.html' %}
-{% block title %}Dashboard - LeerDoelZicht{% endblock %}
+{% extends 'base/base.html' %} 
+{% block title %}Dashboard - LeerDoelZicht{%endblock %} 
 {% block content %}
 
 <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
 {% if role == 'teacher' %}
 <section class="mb-8">
-    <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
-        <form action="/import" method="post" enctype="multipart/form-data" class="flex items-center gap-4">
-            <input type="file" name="file" accept=".json" required class="flex-1 border border-primary rounded px-3 py-2">
-            <button type="submit" class="btn-primary">Importeer JSON</button>
-        </form>
-    </div>
+  <div class="card">
+    <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
+    <form
+      action="/import"
+      method="post"
+      enctype="multipart/form-data"
+      class="flex items-center gap-4"
+    >
+      <input
+        type="file"
+        name="file"
+        accept=".json"
+        required
+        class="flex-1 border border-primary rounded px-3 py-2"
+      />
+      <button type="submit" class="btn-primary">Importeer JSON</button>
+    </form>
+  </div>
 </section>
 {% endif %}
 
@@ -71,16 +82,75 @@
 </section>
 {% endif %}
 
-<section class="mt-8">
-    <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Gebruikers</h3>
-            <button type="button" data-refresh="#users-list" data-url="/api/partial/users" class="btn-outline">
-                Ververs
-            </button>
-        </header>
-        <div id="users-list">{% include 'partials/user_list.html' %}</div>
-    </div>
-</section>
 
-{% endblock %}
+<section class="mt-8">
+  <div class="card">
+    <header class="flex items-center justify-between gap-4 mb-4">
+      <h3 class="text-xl font-semibold">Gebruikers</h3>
+      <button
+        type="button"
+        data-refresh="#users-list"
+        data-url="/api/partial/users"
+        class="btn-outline"
+      >
+        Ververs
+      </button>
+    </header>
+    <div id="users-list">{% include 'partials/user_list.html' %}</div>
+  </div>
+
+
+  {% if role == 'teacher' %}
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Mijn Klassen</h3>
+        <button
+          type="button"
+          data-refresh="#classes-list"
+          data-url="/api/partial/classes"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="classes-list">{% include 'partials/classes_list.html' %}</div>
+    </div>
+  </section>
+  {% endif %} 
+
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Docenten</h3>
+        <button
+          type="button"
+          data-refresh="#teachers-list"
+          data-url="/api/partial/teachers"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="teachers-list">{% include 'partials/teacher_list.html' %}</div>
+    </div>
+  </section>
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Studenten</h3>
+        <button
+          type="button"
+          data-refresh="#students-list"
+          data-url="/api/partial/students"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="students-list">{% include 'partials/student_list.html' %}</div>
+    </div>
+  </section>
+
+  {% endblock %}
+</section>
