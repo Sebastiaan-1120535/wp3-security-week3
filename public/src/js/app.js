@@ -30,9 +30,11 @@ document.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
   loadLatestResults('#latest-results');
   loadStudentProgress('#student-progress');
+  loadFragment('#student-goals', '/api/partial/student-goals');
 
   document.getElementById('refresh-latest-results')?.addEventListener('click', () => loadLatestResults('#latest-results'));
   document.getElementById('refresh-student-progress')?.addEventListener('click', () => loadStudentProgress('#student-progress'));
+  document.getElementById('refresh-student-goals')?.addEventListener('click', () => loadFragment('#student-goals', '/api/partial/student-goals'));
 
   const toasts = document.querySelectorAll('.toast');
   toasts.forEach(toast => {

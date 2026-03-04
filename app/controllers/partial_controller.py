@@ -43,6 +43,16 @@ def get_subject_progress_api(db_path: str, subject_id: int):
     return jsonify(chart_data)
 
 
+def render_student_goals_partial(db_path: str):
+    user_id = session.get('user_id')
+    if not user_id:
+        return '', 401
+
+    partial_m = Partial(db_path)
+    progress = partial_m.get_student_progress(user_id)
+    return render_template('partials/student_goals.html', progress=progress)
+
+
 def get_student_progress_api(db_path: str):
     user_id = session.get('user_id')
     if not user_id:
