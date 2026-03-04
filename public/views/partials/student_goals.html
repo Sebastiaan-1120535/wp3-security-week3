@@ -1,0 +1,39 @@
+{% set subjects = progress | map(attribute='subject') | unique | list %}
+{% for subject in subjects %}
+<div class="card mb-6">
+    <details open>
+        <summary class="cursor-pointer flex items-center justify-between pb-4 border-b border-slate-200">
+            <h3 class="text-xl font-semibold">{{ subject }}</h3>
+        </summary>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+            {% for item in progress if item.subject == subject %}
+            <div class="p-4 rounded-lg bg-slate-100 border border-slate-200">
+                <h4 class="font-semibold mb-2">{{ item.title }}</h4>
+
+                {% if item.has_data %}
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ item.score }}
+                    </span>
+                    <span class="text-sm text-slate-500">({{ item.score_numeric }}%)</span>
+                </div>
+
+                {% if item.keywords %}
+                <div class="flex flex-wrap gap-1">
+                    {% for kw in item.keywords %}
+                    <span class="badge badge-info">{{ kw }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <p class="text-sm text-slate-500">Geen data beschikbaar</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </details>
+</div>
+{% else %}
+<p class="text-slate-500">Geen resultaten beschikbaar.</p>
+{% endfor %}

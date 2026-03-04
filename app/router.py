@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, session, render_template, flash
 from app.controllers.dashboard_controller import render_dashboard_page
-from app.controllers.partial_controller import render_latest_results_partial, render_student_progress_partial, get_student_progress_api, get_subject_progress_api, get_recent_results_api
-from app.controllers.dashboard_controller import render_dashboard_page, get_student_progress_api
+from app.controllers.partial_controller import render_latest_results_partial, render_student_progress_partial, render_student_goals_partial, get_student_progress_api, get_subject_progress_api, get_recent_results_api
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
 from app.models.teacher import Teacher
@@ -141,6 +140,13 @@ def partial_student_progress():
     if not session.get('user'):
         return '', 401
     return render_student_progress_partial(DB_PATH)
+
+
+@app.route('/api/partial/student-goals')
+def partial_student_goals():
+    if not session.get('user'):
+        return '', 401
+    return render_student_goals_partial(DB_PATH)
 
 
 @app.route('/api/student/progress')
