@@ -100,6 +100,7 @@
         <h3 class="text-xl font-semibold">Docenten</h3>
         <button
           type="button"
+          id="refresh-teachers-list"
           data-refresh="#teachers-list"
           data-url="/api/partial/teachers"
           class="btn-outline"
@@ -107,7 +108,7 @@
           Ververs
         </button>
       </header>
-      <div id="teachers-list">{% include 'partials/teacher_list.html' %}</div>
+      <div id="teachers-list"></div>
     </div>
   </section>
   <section class="mt-8">
@@ -116,6 +117,7 @@
         <h3 class="text-xl font-semibold">Studenten</h3>
         <button
           type="button"
+          id="refresh-students-list"
           data-refresh="#students-list"
           data-url="/api/partial/students"
           class="btn-outline"
@@ -123,7 +125,7 @@
           Ververs
         </button>
       </header>
-      <div id="students-list">{% include 'partials/student_list.html' %}</div>
+      <div id="students-list"></div>
     </div>
   </section>
 
