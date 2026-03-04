@@ -14,6 +14,12 @@ def login_view(db_path: str):
             session['user'] = user['email']
             session['role'] = user['role']
             session['user_id'] = user['user_id']
+            # if teacher, also fetch corresponding teacher_id
+            if user['role'] == 'teacher':
+                from app.models.teacher import Teacher
+                teacher_row = Teacher(db_path).find_by_user_id(user['user_id'])
+                if teacher_row:
+                    session['teacher_id'] = teacher_row['teacher_id']
             flash('Inloggen gelukt.')
             return redirect(url_for('home'))
         else:
@@ -39,6 +45,13 @@ def register_view(db_path: str):
             session['user'] = result['email']
             session['role'] = result['role']
             session['user_id'] = result['user_id']
+            # new registrants are not automatically teachers in `teachers` table
+            # so we only add teacher_id if the record already exists
+            if result['role'] == 'teacher':
+                from app.models.teacher import Teacher
+                teacher_row = Teacher(db_path).find_by_user_id(result['user_id'])
+                if teacher_row:
+                    session['teacher_id'] = teacher_row['teacher_id']
             flash('Registratie gelukt. Je bent ingelogd.')
             return redirect(url_for('home'))
         else:

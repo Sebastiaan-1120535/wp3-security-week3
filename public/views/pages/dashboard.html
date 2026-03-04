@@ -1,18 +1,29 @@
-{% extends 'base/base.html' %}
-{% block title %}Dashboard - LeerDoelZicht{% endblock %}
+{% extends 'base/base.html' %} 
+{% block title %}Dashboard - LeerDoelZicht{%endblock %} 
 {% block content %}
 
 <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
 {% if role == 'teacher' %}
 <section class="mb-8">
-    <div class="card">
-        <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
-        <form action="/import" method="post" enctype="multipart/form-data" class="flex items-center gap-4">
-            <input type="file" name="file" accept=".json" required class="flex-1 border border-primary rounded px-3 py-2">
-            <button type="submit" class="btn-primary">Importeer JSON</button>
-        </form>
-    </div>
+  <div class="card">
+    <h3 class="text-xl font-semibold mb-4">Data Importeren</h3>
+    <form
+      action="/import"
+      method="post"
+      enctype="multipart/form-data"
+      class="flex items-center gap-4"
+    >
+      <input
+        type="file"
+        name="file"
+        accept=".json"
+        required
+        class="flex-1 border border-primary rounded px-3 py-2"
+      />
+      <button type="submit" class="btn-primary">Importeer JSON</button>
+    </form>
+  </div>
 </section>
 {% endif %}
 
@@ -33,19 +44,126 @@
             <button type="button" id="refresh-student-progress" class="btn-outline">Ververs</button>
         </header>
         <div id="student-progress"></div>
+        <h3 class="text-xl font-semibold mb-4">Mijn Voortgang</h3>
+        <canvas id="chart-progress" class="w-full h-48 mx-auto" data-progress="{{ progress | selectattr('has_data') | list | tojson | e }}"></canvas>
     </div>
 </section>
+
+{% set subjects = progress | map(attribute='subject') | unique | list %}
+{% for subject in subjects %}
+<div class="card mb-6">
+    <details open>
+        <summary class="cursor-pointer flex items-center justify-between pb-4 border-b border-slate-200">
+            <h3 class="text-xl font-semibold">{{ subject }}</h3>
+        </summary>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+            {% for item in progress if item.subject == subject %}
+            <div class="p-4 rounded-lg bg-slate-100 border border-slate-200">
+                <h4 class="font-semibold mb-2">{{ item.title }}</h4>
+
+                {% if item.has_data %}
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ item.score }}
+                    </span>
+                    <span class="text-sm text-slate-500">({{ item.score_numeric }}%)</span>
+                </div>
+
+                {% if item.keywords %}
+                <div class="flex flex-wrap gap-1">
+                    {% for kw in item.keywords %}
+                    <span class="badge badge-info">{{ kw }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <p class="text-sm text-slate-500">Geen data beschikbaar</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </details>
+</div>
+{% endfor %}
+
+
+{% else %}
+<section class="mb-8">
+    <div class="card">
+        <p class="text-slate-500">Geen resultaten beschikbaar. </p>
+    </div>
+</section>
+
 
 <section class="mt-8">
-    <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Gebruikers</h3>
-            <button type="button" data-refresh="#users-list" data-url="/api/partial/users" class="btn-outline">
-                Ververs
-            </button>
-        </header>
-        <div id="users-list">{% include 'partials/user_list.html' %}</div>
-    </div>
-</section>
+  <div class="card">
+    <header class="flex items-center justify-between gap-4 mb-4">
+      <h3 class="text-xl font-semibold">Gebruikers</h3>
+      <button
+        type="button"
+        data-refresh="#users-list"
+        data-url="/api/partial/users"
+        class="btn-outline"
+      >
+        Ververs
+      </button>
+    </header>
+    <div id="users-list">{% include 'partials/user_list.html' %}</div>
+  </div>
 
-{% endblock %}
+
+  {% if role == 'teacher' %}
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Mijn Klassen</h3>
+        <button
+          type="button"
+          data-refresh="#classes-list"
+          data-url="/api/partial/classes"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="classes-list">{% include 'partials/classes_list.html' %}</div>
+    </div>
+  </section>
+  {% endif %} 
+
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Docenten</h3>
+        <button
+          type="button"
+          data-refresh="#teachers-list"
+          data-url="/api/partial/teachers"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="teachers-list">{% include 'partials/teacher_list.html' %}</div>
+    </div>
+  </section>
+  <section class="mt-8">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Studenten</h3>
+        <button
+          type="button"
+          data-refresh="#students-list"
+          data-url="/api/partial/students"
+          class="btn-outline"
+        >
+          Ververs
+        </button>
+      </header>
+      <div id="students-list">{% include 'partials/student_list.html' %}</div>
+    </div>
+  </section>
+
+  {% endblock %}
+</section>
