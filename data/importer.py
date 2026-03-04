@@ -49,6 +49,7 @@ class DataImporter:
         self._taxonomy_level_cache = {}
         self._learning_goal_cache = set()
         self._keyword_cache = set()
+        self._student_counter = 0
 
     def _connect(self):
         self.con = sqlite3.connect(self.db_path)
@@ -455,7 +456,8 @@ class DataImporter:
                 user_id = self.cur.lastrowid
         
                 class_ids = [cls.get("id") for cls in CLASSES]
-                class_id = random.choice(class_ids)
+                class_id = class_ids[self._student_counter % len(class_ids)]
+                self._student_counter += 1
 
                 self.cur.execute(
                     """INSERT OR IGNORE INTO students (student_id, first_name, last_name, user_id, class_id)
