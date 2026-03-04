@@ -21,7 +21,7 @@
             /* Neutrals */
             --color-background: #F7F9FC;
             --color-surface: #FFFFFF;
-            --color-border: #E5EAF2;
+            --color-border: #ffffff;
 
             /* Text */
             --color-text: #0F172A;
@@ -133,6 +133,25 @@
         *:focus-visible {
             outline: 2px solid var(--color-focus);
             outline-offset: 2px;
+        }
+
+        details summary {
+            list-style: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details summary::after {
+            content: '▼';
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            transition: transform 0.2s;
+        }
+
+        details[open] summary::after {
+            transform: rotate(180deg);
         }
     </style>
     <script type="text/tailwindcss">

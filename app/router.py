@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for, session, render_template, flash
-from app.controllers.dashboard_controller import render_dashboard_page
+from app.controllers.dashboard_controller import render_dashboard_page, get_student_progress_api
 from app.controllers.auth_controller import login_view, register_view, logout_view
 from app.models.user import User
 from data.importer import DataImporter
