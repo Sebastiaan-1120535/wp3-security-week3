@@ -1,5 +1,5 @@
 import sqlite3
-
+from werkzeug.security import generate_password_hash
 
 class Database:
     def __init__(self, db_path: str):
@@ -11,3 +11,4 @@ class Database:
         con.row_factory = sqlite3.Row
         con.execute("PRAGMA foreign_keys = ON")
         return con
+    

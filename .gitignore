@@ -51,6 +51,10 @@ env/
 *.sqlite
 *.sqlite3
 
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
 # Specific project database dirs
 db/
 db*/
