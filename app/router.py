@@ -51,6 +51,50 @@ def dashboard():
     return render_dashboard_page(DB_PATH)
 
 
+@app.route('/docenten')
+def teachers_page():
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    if session.get('role') != 'teacher':
+        return redirect(url_for('dashboard'))
+    return render_template('pages/teachers.html')
+
+
+@app.route('/studenten')
+def students_page():
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    if session.get('role') != 'student':
+        return redirect(url_for('dashboard'))
+    return render_template('pages/students.html')
+
+@app.route('/class/<int:class_id>')
+def view_class(class_id):
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    if session.get('role') != 'teacher':
+        return redirect(url_for('dashboard'))
+
+    # ensure the logged-in user actually owns this class
+    teacher_id = session.get('teacher_id')
+    if not teacher_id:
+        teacher_m = Teacher(DB_PATH)
+        teacher_row = teacher_m.find_by_user_id(session.get('user_id'))
+        if not teacher_row:
+            return redirect(url_for('dashboard'))
+        teacher_id = teacher_row['teacher_id']
+    class_m = Classes(DB_PATH)
+    cls = class_m.find_by_id(class_id)
+    if not cls or cls['teacher_id'] != teacher_id:
+        return redirect(url_for('dashboard'))
+
+    student_m = Student(DB_PATH)
+    students = student_m.find_by_class_id(class_id)
+    return render_template('pages/class_detail.html', cls=cls, students=students)
+
+
+
+
 @app.route('/api/partial/users')
 def partials_users():
     user_m = User(DB_PATH)
@@ -95,49 +139,6 @@ def partials_classes():
         cls['students'] = student_m.find_by_class_id(cls['class_id'])
         enriched.append(cls)
     return render_template('partials/classes_list.html', classes=enriched)
-
-@app.route('/docenten')
-def teachers_page():
-    if not session.get('user'):
-        return redirect(url_for('login'))
-    if session.get('role') != 'teacher':
-        return redirect(url_for('dashboard'))
-    return render_template('pages/teachers.html')
-
-
-@app.route('/studenten')
-def students_page():
-    if not session.get('user'):
-        return redirect(url_for('login'))
-    if session.get('role') != 'student':
-        return redirect(url_for('dashboard'))
-    return render_template('pages/students.html')
-
-
-@app.route('/class/<int:class_id>')
-def view_class(class_id):
-    if not session.get('user'):
-        return redirect(url_for('login'))
-    if session.get('role') != 'teacher':
-        return redirect(url_for('dashboard'))
-
-    # ensure the logged-in user actually owns this class
-    teacher_id = session.get('teacher_id')
-    if not teacher_id:
-        teacher_m = Teacher(DB_PATH)
-        teacher_row = teacher_m.find_by_user_id(session.get('user_id'))
-        if not teacher_row:
-            return redirect(url_for('dashboard'))
-        teacher_id = teacher_row['teacher_id']
-    class_m = Classes(DB_PATH)
-    cls = class_m.find_by_id(class_id)
-    if not cls or cls['teacher_id'] != teacher_id:
-        return redirect(url_for('dashboard'))
-
-    student_m = Student(DB_PATH)
-    students = student_m.find_by_class_id(class_id)
-    return render_template('pages/class_detail.html', cls=cls, students=students)
-
 
 @app.route('/api/partial/latest-results')
 def partial_latest_results():
