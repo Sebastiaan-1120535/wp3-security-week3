@@ -189,6 +189,12 @@
 
                 {% if logged_in %}
                     <li><a href="/dashboard" class="block px-2 py-1 rounded hover:bg-white/10">Dashboard</a></li>
+                    {% if session.get('role') == 'teacher' %}
+                    <li><a href="/docenten" class="block px-2 py-1 rounded hover:bg-white/10">Docenten</a></li>
+                    {% endif %}
+                    {% if session.get('role') == 'student' %}
+                    <li><a href="/studenten" class="block px-2 py-1 rounded hover:bg-white/10">Studenten</a></li>
+                    {% endif %}
                     <li class="mt-4 border-t border-white/20 pt-3">
                         <a href="/logout" class="block px-2 py-1 rounded hover:bg-white/10">Uitloggen</a>
                     </li>

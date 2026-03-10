@@ -96,6 +96,24 @@ def partials_classes():
         enriched.append(cls)
     return render_template('partials/classes_list.html', classes=enriched)
 
+@app.route('/docenten')
+def teachers_page():
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    if session.get('role') != 'teacher':
+        return redirect(url_for('dashboard'))
+    return render_template('pages/teachers.html')
+
+
+@app.route('/studenten')
+def students_page():
+    if not session.get('user'):
+        return redirect(url_for('login'))
+    if session.get('role') != 'student':
+        return redirect(url_for('dashboard'))
+    return render_template('pages/students.html')
+
+
 @app.route('/class/<int:class_id>')
 def view_class(class_id):
     if not session.get('user'):
