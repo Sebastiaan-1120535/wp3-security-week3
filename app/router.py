@@ -26,12 +26,6 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-change-me')
 def login():
     return login_view(DB_PATH)
 
-
-@app.route('/registreren', methods=['GET', 'POST'])
-def register():
-    return register_view(DB_PATH)
-
-
 @app.route('/logout')
 def logout():
     return logout_view(DB_PATH)
