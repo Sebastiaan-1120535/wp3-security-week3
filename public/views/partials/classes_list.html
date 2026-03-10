@@ -1,88 +1,40 @@
 <div class="classes-container">
-  {% if classes %} {% for cls in classes %}
-  <div class="class-card">
-    <h3>{{ cls['name'] }}</h3>
-    <p><strong>Class ID:</strong> {{ cls['class_id'] }}</p>
-    <p><a href="/class/{{ cls['class_id'] }}">Bekijk klas</a></p>
+  {% if classes %}
+  <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    {% for cls in classes %}
+    <article class="group relative flex h-full flex-col rounded-2xl border border-border p-5  ">
 
-    <div class="students-section">
-      <h4>Students</h4>
-      {% if cls.students %}
-      <ul class="student-list">
-        {% for student in cls.students %}
-        <li>
-          <strong
-            >{{ student['first_name'] }} {{ student['last_name'] }}</strong
-          >
-          <span class="student-id">ID: {{ student['student_id'] }}</span>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p class="no-students">No students in this class</p>
-      {% endif %}
-    </div>
+      <div class="flex items-center gap-3 mb-1">
+        <svg aria-hidden xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24"><!-- Icon from Lucide by Lucide Contributors - https://github.com/lucide-icons/lucide/blob/main/LICENSE -->
+          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M11 22H5.5a1 1 0 0 1 0-5h4.501M21 22l-1.879-1.878" />
+            <path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8" />
+            <circle cx="17" cy="18" r="3" />
+          </g>
+        </svg>
+        <h3 class="text-lg font-bold tracking-tight text-slate-900">
+          {{ cls['name'] }}
+        </h3>
+      </div>
+
+      <p class="text-sm text-slate-500">
+        {{ (cls.get('students', []))|length }} leerlingen
+      </p>
+
+      <p class="mt-2 text-sm text-slate-600">Open deze klas om leerlingen en resultaten te bekijken.</p>
+
+      <div class="mt-5 border-t border-border pt-4">
+        <a href="/class/{{ cls['class_id'] }}" class="btn-primary">
+          Bekijk klas
+        </a>
+      </div>
+    </article>
+    {% endfor %}
   </div>
-  {% endfor %} {% else %}
-  <p class="no-classes">No classes found</p>
+  {% else %}
+  <div class=" p-6 text-center">
+    <p class="text-sm font-medium text-slate-600">Geen klassen gevonden.</p>
+  </div>
   {% endif %}
 </div>
-
-<style>
-  .classes-container {
-    padding: 20px;
-  }
-
-  .class-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-  }
-
-  .class-card h3 {
-    margin-top: 0;
-    color: #333;
-  }
-
-  .students-section {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-  }
-
-  .students-section h4 {
-    margin-top: 0;
-    color: #555;
-  }
-
-  .student-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .student-list li {
-    padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-  }
-
-  .student-list li:last-child {
-    border-bottom: none;
-  }
-
-  .student-id {
-    font-size: 0.85em;
-    color: #999;
-  }
-
-  .no-students,
-  .no-classes {
-    color: #999;
-    font-style: italic;
-  }
-</style>
