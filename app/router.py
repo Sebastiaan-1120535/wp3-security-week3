@@ -6,6 +6,7 @@ from app.models.user import User
 from app.models.teacher import Teacher
 from app.models.student import Student
 from app.models.classes import Classes
+from app.models.partial import Partial
 
 from data.importer import DataImporter
 import os
@@ -77,17 +78,14 @@ def view_class(class_id):
         if not teacher_row:
             return redirect(url_for('dashboard'))
         teacher_id = teacher_row['teacher_id']
+    
     class_m = Classes(DB_PATH)
     cls = class_m.find_by_id(class_id)
+    
     if not cls or cls['teacher_id'] != teacher_id:
         return redirect(url_for('dashboard'))
-
-    student_m = Student(DB_PATH)
-    students = student_m.find_by_class_id(class_id)
-    return render_template('pages/class_detail.html', cls=cls, students=students)
-
-
-
+    
+    return render_template('pages/class_detail.html', cls=cls)
 
 @app.route('/api/partial/users')
 def partials_users():
@@ -134,6 +132,26 @@ def partials_classes():
         enriched.append(cls)
     return render_template('partials/classes_list.html', classes=enriched)
 
+
+@app.route('/api/partial/class/<int:class_id>/students')
+def partial_class_students(class_id):
+    
+    student_m = Student(DB_PATH)
+    students = student_m.find_by_class_id(class_id)
+
+    return render_template('partials/student_list.html', students=students)
+
+@app.route('/api/partial/class/<int:class_id>/goals')
+def partial_class_students_goals(class_id):
+
+    class_m = Classes(DB_PATH)
+    cls = class_m.find_by_id(class_id)
+
+    progress = class_m.get_learings_goals(cls['name'])
+
+    return render_template('partials/student_goals.html', progress=progress)
+
+    
 @app.route('/api/partial/latest-results')
 def partial_latest_results():
     if not session.get('user'):

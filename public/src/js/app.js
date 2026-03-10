@@ -2,42 +2,55 @@ import { loadFragment } from './modules/fragmentLoader.js';
 import { loadLatestResults } from './modules/latestResults.js';
 import { loadStudentProgress } from './modules/studentProgress.js';
 
+const API_BASE_URL = '/api/partial';
 const widgets = [
   {
     callback: 'loadLatestResults',
     target: '#latest-results',
     refreshId: 'refresh-latest-results',
-    url: '/api/partial/latest-results'
+    url: `${API_BASE_URL}/latest-results`
   },
   {
     callback: 'loadStudentProgress',
     target: '#student-progress',
     refreshId: 'refresh-student-progress',
-    url: '/api/partial/student-progress'
+    url: `${API_BASE_URL}/student-progress`
   },
   {
     callback: 'fragment',
     target: '#student-goals',
     refreshId: 'refresh-student-goals',
-    url: '/api/partial/student-goals'
+    url: `${API_BASE_URL}/student-goals`
   },
   {
     callback: 'fragment',
     target: '#students-list',
     refreshId: 'refresh-students-list',
-    url: '/api/partial/students'
+    url: `${API_BASE_URL}/students`
   },
   {
     callback: 'fragment',
     target: '#teachers-list',
     refreshId: 'refresh-teachers-list',
-    url: '/api/partial/teachers'
+    url: `${API_BASE_URL}/teachers`
   },
   {
     callback: 'fragment',
     target: '#classes-list',
     refreshId: 'refresh-classes-list',
-    url: '/api/partial/classes'
+    url: `${API_BASE_URL}/classes`
+  }, 
+  {
+    callback: 'fragment',
+    target: '#class-students-list',
+    refreshId: 'refresh-class-students-list',
+    url: `${API_BASE_URL}/${new URL(window.location.href).pathname}/students`
+  },
+  {
+    callback: 'fragment',
+    target: '#class-student-goals',
+    refreshId: 'refresh-class-student-goals',
+    url: `${API_BASE_URL}/${new URL(window.location.href).pathname}/goals`
   }
 ]
 

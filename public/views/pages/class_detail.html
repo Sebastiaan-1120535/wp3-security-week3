@@ -1,18 +1,48 @@
-<h2>Klas: {{ cls['name'] }}</h2>
-<p><strong>ID:</strong> {{ cls['class_id'] }}</p>
+{% extends 'base/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
 
-<h3>Leerlingen</h3>
-{% if students %}
-<ul>
-  {% for student in students %}
-  <li>
-    {{ student['first_name'] }} {{ student['last_name'] }} (ID: {{
-    student['student_id'] }})
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>Geen leerlingen in deze klas.</p>
-{% endif %}
 
-<a href="{{ url_for('dashboard') }}">Terug naar dashboard</a>
+<h2 class="text-2xl font-semibold mb-6">{{ cls['name'] }}</h2>
+
+<main class="grid gap-4 md:grid-cols-3  ">
+
+  <section class=" col-span-2">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Voortgang Over Tijd</h3>
+        <button type="button" id="refresh-class-progress" class="btn-outline">Ververs</button>
+      </header>
+      <div id="class-progress"></div>
+    </div>
+  </section>
+
+  <section class=" ">
+    <div class="card">
+
+      <div class="card">
+        <header class="flex items-center justify-between gap-4 mb-4">
+          <h3 class="text-xl font-semibold">Studenten</h3>
+          <button type="button" id="refresh-class-students-list" class="btn-outline">
+            Ververs
+          </button>
+        </header>
+        <div id="class-students-list"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="col-span-3 ">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Leerdoelen</h3>
+        <button type="button" id="refresh-class-student-goals" class="btn-outline">Ververs</button>
+      </header>
+      <div id="class-student-goals"></div>
+    </div>
+  </section>
+
+</main>
+
+{% endblock %}
