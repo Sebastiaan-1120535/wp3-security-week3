@@ -2,7 +2,6 @@ import json
 import sqlite3
 from pathlib import Path
 from werkzeug.security import generate_password_hash
-import random
 
 try:
     import ijson
@@ -11,29 +10,7 @@ try:
 except ImportError:
     HAS_IJSON = False
 
-CLASSES = [
-    {
-        "id": 1,
-        "name": "1A",
-        "teachter_id": 1,   
-    },
-    {
-        "id": 2,
-        "name": "1B",
-        "teachter_id": 2,
-    }
-]
 
-TEACHERS = [
-    {
-        "id": 1,
-        "name": "sarah",
-    },
-    {
-        "id": 2,
-        "name": "michael",
-    }
-]
 
 class DataImporter:
     BATCH_SIZE = 1000
@@ -49,7 +26,8 @@ class DataImporter:
         self._taxonomy_level_cache = {}
         self._learning_goal_cache = set()
         self._keyword_cache = set()
-        self._student_counter = 0
+        self._student_primary_subject = {}
+        self._subject_class_map = {}
 
     def _connect(self):
         self.con = sqlite3.connect(self.db_path)
@@ -292,6 +270,32 @@ class DataImporter:
         for row in self.cur.fetchall():
             self._learning_goal_cache.add(row[0])
 
+    def _first_pass(self, json_file: str):
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        entries = data.get("entries", [])
+        subjects = {}
+        student_counts = {}
+
+        for entry in entries:
+            subj = entry.get("subject", {})
+            sid = subj.get("id")
+            if sid is not None:
+                subjects[sid] = subj.get("name", "Unknown")
+
+            stud_id = entry.get("student", {}).get("id")
+            if stud_id is not None and sid is not None:
+                student_counts.setdefault(stud_id, {})
+                student_counts[stud_id][sid] = student_counts[stud_id].get(sid, 0) + 1
+
+        student_subject = {
+            stud_id: max(counts, key=counts.get)
+            for stud_id, counts in student_counts.items()
+        }
+
+        return subjects, student_subject
+
     def import_json(self, json_file: str):
         print("Import gestart...")
         self._connect()
@@ -300,14 +304,18 @@ class DataImporter:
             self._connect()
             self._load_existing_data()
 
+            subjects, student_subject = self._first_pass(json_file)
+            counter = 0
+            for subj_id, subj_name in sorted(subjects.items()):
+                counter += 1
+                self._ensure_teacher(counter, subj_name)
+                self._ensure_class(counter, subj_name, counter)
+                self._subject_class_map[subj_id] = counter
+
+            self._student_primary_subject = student_subject
+
             file_size = Path(json_file).stat().st_size
-            use_streaming = HAS_IJSON and file_size > 50 * 1024 * 1024
-
-            for teacher in TEACHERS:
-                self._ensure_teacher(teacher.get("id", {}), teacher.get("name", "Unknown"))
-
-            for cls in CLASSES:
-                self._ensure_class(cls.get("id", {}), cls.get("name", "Unknown"), cls.get("teachter_id", {}))
+            use_streaming = HAS_IJSON and file_size > 100 * 1024 * 1024
 
             if use_streaming:
                 self._import_streaming(json_file)
@@ -389,13 +397,13 @@ class DataImporter:
             for snapshot in snapshots:
                 self._import_snapshot(snapshot, student_id, lg_id, taxonomy_level_map)
 
-    def _ensure_teacher(self, teacher_id: int, name: str):
+    def _ensure_teacher(self, teacher_id: int, subject_name: str):
 
         if teacher_id in self._teacher_cache:
             return 
 
-        email = f"{name}@test.nl"
-        password_hash = generate_password_hash(email)
+        email = f"docent.{subject_name.lower().replace(' ', '')}@test.nl"
+        password_hash = generate_password_hash("password")
 
         if self.cur:
 
@@ -412,7 +420,7 @@ class DataImporter:
             self.cur.execute(
                 """INSERT OR IGNORE INTO teachers (teacher_id, first_name, last_name, user_id)
                 VALUES (?, ?, ?, ?)""",
-                (teacher_id, name, "", user_id),
+                (teacher_id, "Docent", subject_name, user_id),
             )
 
             self._teacher_cache[teacher_id] = teacher_id
@@ -444,20 +452,19 @@ class DataImporter:
             first_name = parts[0]
             last_name = parts[1] if len(parts) > 1 else ""
 
-            hashed = generate_password_hash(f"{first_name}@test.nl")
+            hashed = generate_password_hash("password")
 
             self.cur.execute(
                 """INSERT OR IGNORE INTO users (email, password, role)
                 VALUES (?, ?, ?)""",
-                (f"{first_name}@test.nl", hashed, "student"),
+                (f"{first_name.lower()}@test.nl", hashed, "student"),
             )
 
             if self.cur:
                 user_id = self.cur.lastrowid
         
-                class_ids = [cls.get("id") for cls in CLASSES]
-                class_id = class_ids[self._student_counter % len(class_ids)]
-                self._student_counter += 1
+                primary_subj = self._student_primary_subject.get(student_id)
+                class_id = self._subject_class_map.get(primary_subj) if primary_subj else None
 
                 self.cur.execute(
                     """INSERT OR IGNORE INTO students (student_id, first_name, last_name, user_id, class_id)
