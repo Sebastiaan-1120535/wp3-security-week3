@@ -4,34 +4,40 @@
 
 <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
 
-<section class="mb-8">
-    <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Laatste Resultaten</h3>
-            <button type="button" id="refresh-latest-results" class="btn-outline">Ververs</button>
-        </header>
-        <div id="latest-results"></div>
-    </div>
-</section>
+<main class="grid gap-4 md:grid-cols-3  ">
 
-<section class="mb-8">
-    <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Voortgang Over Tijd</h3>
-            <button type="button" id="refresh-student-progress" class="btn-outline">Ververs</button>
-        </header>
-        <div id="student-progress"></div>
-    </div>
-</section>
+    <section class=" col-span-2">
+        <div class="card">
+            <header class="flex items-center justify-between gap-4 mb-4">
+                <h3 class="text-xl font-semibold">Voortgang Over Tijd</h3>
+                <button type="button" id="refresh-student-progress" class="btn-outline">Ververs</button>
+            </header>
+            <div id="student-progress"></div>
+        </div>
+    </section>
 
-<section class="mb-8">
-    <div class="card">
-        <header class="flex items-center justify-between gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Leerdoelen</h3>
-            <button type="button" id="refresh-student-goals" class="btn-outline">Ververs</button>
-        </header>
-        <div id="student-goals"></div>
-    </div>
-</section>
+    <section class="">
+        <div class="card">
+            <header class="flex items-center justify-between gap-4 mb-4">
+                <h3 class="text-xl font-semibold">Laatste Resultaten</h3>
+                <button type="button" id="refresh-latest-results" class="btn-outline">Ververs</button>
+            </header>
+            <div id="latest-results"></div>
+        </div>
+    </section>
+    
+   
+    
+    <section class="col-span-3">
+        <div class="card">
+            <header class="flex items-center justify-between gap-4 mb-4">
+                <h3 class="text-xl font-semibold">Leerdoelen</h3>
+                <button type="button" id="refresh-student-goals" class="btn-outline">Ververs</button>
+            </header>
+            <div id="student-goals"></div>
+        </div>
+    </section>
+</main>
+
 
 {% endblock %}
