@@ -11,20 +11,22 @@
                 <h4 class="font-semibold mb-2">{{ item.title }}</h4>
 
                 {% if item.has_data %}
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
-                        {{ item.score }}
-                    </span>
-                    <span class="text-sm text-slate-500">({{ item.score_numeric }}%)</span>
-                </div>
+                    {% if item.score %}
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="badge {% if item.score == 'Sterk' %}badge-success{% elif item.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
+                            {{ item.score }}
+                        </span>
+                        <span class="text-sm text-slate-500">({{ item.score_numeric }}%)</span>
+                    </div>
+                    {% endif %}
 
-                {% if item.keywords %}
-                <div class="flex flex-wrap gap-1">
-                    {% for kw in item.keywords %}
-                    <span class="badge badge-info">{{ kw }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
+                    {% if item.keywords %}
+                    <div class="flex flex-wrap gap-1">
+                        {% for kw in item.keywords %}
+                        <span class="badge badge-info">{{ kw }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
 
                 {% else %}
                 <p class="text-sm text-slate-500">Geen data beschikbaar</p>

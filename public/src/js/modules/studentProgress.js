@@ -1,26 +1,15 @@
 import { useApiHandler } from './apiHandler.js';
+import { loadFragment } from './fragmentLoader.js';
 
 let currentChart = null;
 
-export async function loadStudentProgress(targetSelector) {
-    const target = document.querySelector(targetSelector);
-    if (!target) return;
+export async function loadStudentProgress(targetSelector, url = '/api/partial/student-progress') {
+    await loadFragment(targetSelector, url, ({ target, data }) => {
+        if (!data) return;
 
-    target.innerHTML = '<div class="flex justify-center p-4"><div class="animate-spin h-6 w-6 border-2 rounded-full" style="border-color: var(--color-accent); border-top-color: transparent;"></div></div>';
-
-    const request = useApiHandler('/api/partial/student-progress');
-    const { data, error } = await request.Get();
-
-    if (error) {
-        target.innerHTML = `<p style="color: var(--color-danger);">${error.message}</p>`;
-        return;
-    }
-
-    if (data) {
-        target.innerHTML = data;
         initProgressChart(target);
         initSubjectSelect(target);
-    }
+    });
 }
 
 function initProgressChart(container) {
