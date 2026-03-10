@@ -1,4 +1,4 @@
-import { useApiHandler } from './apiHandler.js';
+import { loadFragment } from './fragmentLoader.js';
 
 const ITEM_HEIGHT = 72;
 let pageSize = 10;
@@ -6,22 +6,10 @@ let offset = 0;
 let loading = false;
 let hasMore = true;
 
-export async function loadLatestResults(targetSelector) {
-    const target = document.querySelector(targetSelector);
-    if (!target) return;
+export async function loadLatestResults(targetSelector, url = '/api/partial/latest-results') {
+    await loadFragment(targetSelector, url, async ({ target, data }) => {
+        if (!data) return;
 
-    target.innerHTML = '<div class="flex justify-center p-4"><div class="animate-spin h-6 w-6 border-2 rounded-full" style="border-color: var(--color-accent); border-top-color: transparent;"></div></div>';
-
-    const request = useApiHandler('/api/partial/latest-results');
-    const { data, error } = await request.Get();
-
-    if (error) {
-        target.innerHTML = `<p style="color: var(--color-danger);">${error.message}</p>`;
-        return;
-    }
-
-    if (data) {
-        target.innerHTML = data;
         offset = 0;
         hasMore = true;
         loading = false;
@@ -35,7 +23,7 @@ export async function loadLatestResults(targetSelector) {
 
         await fetchResults(target);
         initScrollListener(target);
-    }
+    });
 }
 
 async function fetchResults(container) {
