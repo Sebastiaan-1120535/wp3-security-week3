@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+{% block title %}Studenten - LeerDoelZicht{% endblock %}
+{% block content %}
+
+<h2 class="text-2xl font-semibold mb-6">Studenten</h2>
+
+<section class="mt-8">
+  <div class="card">
+    <header class="flex items-center justify-between gap-4 mb-4">
+      <h3 class="text-xl font-semibold">Studenten</h3>
+      <button
+        type="button"
+        id="refresh-students-list"
+        data-refresh="#students-list"
+        data-url="/api/partial/students"
+        class="btn-outline"
+      >
+        Ververs
+      </button>
+    </header>
+    <div id="students-list"></div>
+  </div>
+</section>
+
+{% endblock %}
