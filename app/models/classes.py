@@ -88,10 +88,7 @@ class Classes:
                 }
 
             can_scores, know_scores, confidence_scores = self._get_goal_level_averages(
-                cur,
-                class_id,
-                selected_goal_id,
-                levels,
+                cur, class_id, selected_goal_id, levels,
             )
 
             return {
@@ -147,10 +144,10 @@ class Classes:
             )
             score_row = cur.fetchone()
 
-            can_scores.append(int(round(self._safe_float(score_row['avg_can']) * 100, 0)))
-            know_scores.append(int(round(self._safe_float(score_row['avg_know']) * 100, 0)))
-            confidence_scores.append(int(round(self._safe_float(score_row['avg_confidence']) * 100, 0)))
-
+            can_scores.append(int(score_row['avg_can'] * 100))
+            know_scores.append(int(score_row['avg_know'] * 100))
+            confidence_scores.append(int(score_row['avg_confidence'] * 100))
+            
         return can_scores, know_scores, confidence_scores
 
 
