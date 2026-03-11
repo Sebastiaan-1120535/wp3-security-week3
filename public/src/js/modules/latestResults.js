@@ -75,26 +75,26 @@ function renderResultItem(item) {
     else if (item.score === 'Voldoende') badgeClass = 'badge-warning';
     else badgeClass = 'badge-danger';
 
-    const keywords = item.keywords && item.keywords.length
-        ? `<div class="flex flex-wrap gap-1 mt-1">${item.keywords.map(kw => `<span class="badge badge-info">${kw}</span>`).join('')}</div>`
-        : '';
-
     const scoreHtml = item.has_data
         ? `<div class="flex items-center gap-2"><span class="badge ${badgeClass}">${item.score}</span><span class="text-sm" style="color: var(--color-text-muted);">${item.score_numeric}%</span></div>`
         : '<span class="text-sm" style="color: var(--color-text-muted);">Geen data</span>';
 
-    return `<div class="flex items-center justify-between rounded-lg px-4 py-3" style="border: 1px solid var(--color-border);">
-        <div>
-            <p class="font-semibold">${item.title}</p>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="text-sm" style="color: var(--color-text-muted);">${item.subject}</span>
-                <span class="text-sm" style="color: var(--color-text-muted);">&middot;</span>
-                <span class="text-sm" style="color: var(--color-text-muted);">${item.date || ''}</span>
+    return `
+    <article class="rounded-lg border bg-gray-50 px-4 py-3" style="border-color: var(--color-border);">
+        <h2 class="font-bold leading-tight mb-1">${item.title}</h2>
+        <p class="truncate font-semibold mb-1">${item.subject}</p>
+        <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+                <div class="mt-1 flex items-center gap-2 text-sm" style="color: var(--color-text-muted);">
+                    <span>${item.date || ''}</span>
+                </div>
             </div>
-            ${keywords}
+            <div class="shrink-0">
+                ${scoreHtml}
+            </div>
         </div>
-        ${scoreHtml}
-    </div>`;
+    </article>
+    `;
 }
 
 function initScrollListener(container) {
