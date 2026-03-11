@@ -1,0 +1,19 @@
+{% if goals %}
+<div class="mb-4">
+    <select id="subject-select" class="border rounded px-3 py-2" style="border-color: var(--color-border);">
+        {% for goal in goals %}
+        <option value="{{ goal.id }}" {% if loop.first %}selected{% endif %}>{{ goal.title }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+{% if chart_data %}
+<div style="position: relative; height: 300px; width: 100%;">
+    <canvas id="chart-progress-over-time" data-chart='{{ chart_data|tojson }}'></canvas>
+</div>
+{% else %}
+<p style="color: var(--color-text-muted); text-align: center;">
+    Geen voortgangsgegevens beschikbaar voor deze klas.
+</p>
+{% endif %}

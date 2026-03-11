@@ -3,24 +3,37 @@ import { loadFragment } from './fragmentLoader.js';
 
 let currentChart = null;
 
-export async function loadStudentProgress(targetSelector, url = '/api/partial/student-progress') {
+export async function loadStudentaverage(targetSelector, url, selectUrl) {
+
+    await loadFragment(targetSelector, url, ({ target, data }) => {
+        if (!data) return;
+
+        initProgressChart(target, "bar");
+        initSubjectSelect(target, selectUrl, "bar");
+    });
+}
+
+export async function loadStudentProgress(targetSelector, url, selectUrl) {
+
+
     await loadFragment(targetSelector, url, ({ target, data }) => {
         if (!data) return;
 
         initProgressChart(target);
-        initSubjectSelect(target);
+        initSubjectSelect(target, selectUrl);
     });
 }
 
-function initProgressChart(container) {
+function initProgressChart(container, type) {
     const canvas = container.querySelector('#chart-progress-over-time');
+
     if (!canvas) return;
 
     const chartData = JSON.parse(canvas.dataset.chart);
-    renderChart(canvas, chartData);
+    renderChart(canvas, chartData, type);
 }
 
-function renderChart(canvas, chartData) {
+function renderChart(canvas, chartData, type = 'line') {
     if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
         canvas.style.display = 'none';
         const msg = canvas.parentElement.querySelector('[data-no-data]');
@@ -55,7 +68,7 @@ function renderChart(canvas, chartData) {
 
     const ctx = canvas.getContext('2d');
     currentChart = new Chart(ctx, {
-        type: 'line',
+        type: type,
         data: {
             labels: chartData.labels,
             datasets: chartData.datasets
@@ -64,16 +77,19 @@ function renderChart(canvas, chartData) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: {
-                    min: yMin,
-                    max: yMax,
-                    ticks: { stepSize: Math.max(1, Math.round((yMax - yMin) / 10)) },
-                    title: { display: true, text: 'Score (%)' }
-                },
                 x: {
-                    title: { display: true, text: 'Datum' }
+                    stacked: true,
+                    title: type === 'bar' ? { display: true, text: 'Kennis' } : { display: true, text: 'Datum' }
+                },
+                y: {
+                    stacked: false,
+                    min: type === 'bar' ? 0 : yMin,
+                    max: type === 'bar' ? 100 : yMax,
+                    ticks: type === 'bar' ? { stepSize: 10 } : { stepSize: Math.max(1, Math.round((yMax - yMin) / 10)) },
+                    title: { display: true, text: 'Score (%)' }
                 }
             },
+            
             plugins: {
                 legend: { display: true, position: 'top' }
             }
@@ -81,7 +97,7 @@ function renderChart(canvas, chartData) {
     });
 }
 
-function initSubjectSelect(container) {
+function initSubjectSelect(container, selectUrl, type) {
     const select = container.querySelector('#subject-select');
     if (!select) return;
 
@@ -92,14 +108,14 @@ function initSubjectSelect(container) {
 
         if (!subjectId) {
             const chartData = JSON.parse(canvas.dataset.chart);
-            renderChart(canvas, chartData);
+            renderChart(canvas, chartData, type);
             return;
         }
 
-        const request = useApiHandler(`/api/student/progress/subject/${subjectId}`);
+        const request = useApiHandler(`${selectUrl}/${subjectId}`);
         const { data, error } = await request.Get();
 
         if (error) return;
-        if (data) renderChart(canvas, data);
+        if (data) renderChart(canvas, data, type);
     });
 }
