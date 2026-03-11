@@ -9,6 +9,8 @@ Bronnen Sjoerd
 Bronnen Roland
 - Use JSDOC. (n.d.). https://jsdoc.app/tags-typedef
 - Use JSDOC: Index. (n.d.). https://jsdoc.app/
+- Stacked Bar Chart with Groups | Chart.js. (n.d.). https://www.chartjs.org/docs/latest/samples/bar/stacked-groups.html
+- https://chatgpt.com/share/69b19728-96a4-8011-92b1-b9170f38bfe0
 
 Bronnen Sebastiaan
 - https://github.com/Rac-Software-Development/wp2-2025-mvc-1a1
