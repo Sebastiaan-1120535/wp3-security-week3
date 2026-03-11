@@ -70,7 +70,6 @@ def view_class(class_id):
     if session.get('role') != 'teacher':
         return redirect(url_for('dashboard'))
 
-    # ensure the logged-in user actually owns this class
     teacher_id = session.get('teacher_id')
     if not teacher_id:
         teacher_m = Teacher(DB_PATH)
@@ -78,29 +77,36 @@ def view_class(class_id):
         if not teacher_row:
             return redirect(url_for('dashboard'))
         teacher_id = teacher_row['teacher_id']
-    
+
     class_m = Classes(DB_PATH)
     cls = class_m.find_by_id(class_id)
-    
     if not cls or cls['teacher_id'] != teacher_id:
         return redirect(url_for('dashboard'))
-    
+
     return render_template('pages/class_detail.html', cls=cls)
 
 @app.route('/api/partial/users')
 def partials_users():
+    if not session.get('user'):
+        return '', 401
     user_m = User(DB_PATH)
     users = user_m.list_recent(limit=10)
     return render_template('partials/user_list.html', users=users)
 
 @app.route('/api/partial/teachers')
 def partials_teachers():
+    if not session.get('user'):
+        return '', 401
+    if session.get('role') != 'teacher':
+        return '', 403
     teacher_m = Teacher(DB_PATH)
     teachers = teacher_m.list_recent(limit=10)
     return render_template('partials/teacher_list.html', teachers=teachers)
 
 @app.route('/api/partial/students')
 def partials_student():
+    if not session.get('user'):
+        return '', 401
     student_m = Student(DB_PATH)
     student = student_m.list_recent(limit=10)
     return render_template('partials/student_list.html', students=student)
@@ -108,18 +114,18 @@ def partials_student():
 @app.route('/api/partial/classes')
 def partials_classes():
     if not session.get('user'):
-        return 401
+        return '', 401
     if session.get('role') != 'teacher':
-        return 403
+        return '', 403
 
-    # map logged-in user to their teacher record (prefer cached session value)
     teacher_id = session.get('teacher_id')
     if not teacher_id:
         teacher_m = Teacher(DB_PATH)
         teacher_row = teacher_m.find_by_user_id(session.get('user_id'))
         if not teacher_row:
-            return 403
+            return '', 403
         teacher_id = teacher_row['teacher_id']
+
     class_m = Classes(DB_PATH)
     classes = class_m.find_by_teacher_id(teacher_id)
 
@@ -135,7 +141,24 @@ def partials_classes():
 
 @app.route('/api/partial/class/<int:class_id>/students')
 def partial_class_students(class_id):
-    
+    if not session.get('user'):
+        return '', 401
+    if session.get('role') != 'teacher':
+        return '', 403
+
+    teacher_id = session.get('teacher_id')
+    if not teacher_id:
+        teacher_m = Teacher(DB_PATH)
+        teacher_row = teacher_m.find_by_user_id(session.get('user_id'))
+        if not teacher_row:
+            return '', 403
+        teacher_id = teacher_row['teacher_id']
+
+    class_m = Classes(DB_PATH)
+    cls = class_m.find_by_id(class_id)
+    if not cls or cls['teacher_id'] != teacher_id:
+        return '', 403
+
     student_m = Student(DB_PATH)
     students = student_m.find_by_class_id(class_id)
 
@@ -143,9 +166,23 @@ def partial_class_students(class_id):
 
 @app.route('/api/partial/class/<int:class_id>/goals')
 def partial_class_students_goals(class_id):
+    if not session.get('user'):
+        return '', 401
+    if session.get('role') != 'teacher':
+        return '', 403
+
+    teacher_id = session.get('teacher_id')
+    if not teacher_id:
+        teacher_m = Teacher(DB_PATH)
+        teacher_row = teacher_m.find_by_user_id(session.get('user_id'))
+        if not teacher_row:
+            return '', 403
+        teacher_id = teacher_row['teacher_id']
 
     class_m = Classes(DB_PATH)
     cls = class_m.find_by_id(class_id)
+    if not cls or cls['teacher_id'] != teacher_id:
+        return '', 403
 
     progress = class_m.get_learings_goals(cls['name'])
 
