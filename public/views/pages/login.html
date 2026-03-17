@@ -1,32 +1,54 @@
-{% extends 'base/base.html' %}
+{% extends 'base/home.html' %}
 {% block title %}Inloggen - LeerDoelZicht{% endblock %}
 {% block content %}
 
-<section class="max-w-md mx-auto">
-    <div class="card">
-        <h2 class="text-2xl font-semibold mb-6">Inloggen</h2>
-        
-        <form method="post" action="/login" class="space-y-4">
-            <div>
-                <label for="email" class="block text-sm font-medium mb-1">E-mail</label>
-                <input type="email" id="email" name="email" required
-                       class="w-full px-3 py-2 rounded" style="border: 1px solid var(--color-border); background-color: var(--color-surface);">
+<section class="min-h-screen overflow-hidden bg-[#e9edf5] px-6 py-12 md:px-10 md:py-16">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
+        <div class="text-[#0b2a7a]">
+            <p
+                class="mb-4 inline-flex rounded-full border border-[#0b2a7a]/20 bg-white/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                LeerDoelZicht
+            </p>
+            <h1 class="mb-5 text-4xl font-black leading-tight md:text-5xl">
+                Fijn dat je er bent
+            </h1>
+            <p class="max-w-xl text-xl leading-relaxed text-[#0b2a7a]/90">
+                Log in en ga direct naar je dashboard met voortgang per leerdoel, klas en leerling.
+            </p>
+
+            <div aria-hidden class="relative mt-8 hidden h-56 md:block">
+                <div class="absolute left-0 top-4 h-40 w-40 rounded-3xl bg-[#f5db16]"></div>
+                <div class="absolute left-28 top-0 h-44 w-44 rounded-3xl bg-[#3370f7]"></div>
+                <div class="absolute left-52 top-20 h-32 w-32 rounded-3xl bg-[#3eb85b]"></div>
             </div>
-            
-            <div>
-                <label for="password" class="block text-sm font-medium mb-1">Wachtwoord</label>
-                <input type="password" id="password" name="password" required
-                       class="w-full px-3 py-2 rounded" style="border: 1px solid var(--color-border); background-color: var(--color-surface);">
-            </div>
-            
-            <button type="submit" class="btn-primary w-full">
-                Inloggen
-            </button>
-        </form>
-        
-        <p class="mt-4 text-center text-sm" style="color: var(--color-text-muted);">
-            Nog geen account? <a href="/registreren" class="hover:underline" style="color: var(--color-link);">Registreer hier</a>
-        </p>
+        </div>
+
+        <div class="rounded-2xl border border-[#d7dfef] bg-white p-8 shadow-sm md:p-10">
+            <h2 class="mb-2 text-3xl font-bold text-[#0b2a7a]">Inloggen</h2>
+            <p class="mb-6 text-sm text-slate-500">Gebruik je schoolaccount om verder te gaan.</p>
+
+            <form method="post" action="/login" class="space-y-5">
+                <div>
+                    <label for="email" class="mb-2 block text-sm font-semibold text-[#0b2a7a]">E-mail</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full rounded-xl border border-[#cfd8ea] bg-[#f7f9ff] px-4 py-3 text-[#0b2a7a] outline-none transition placeholder:text-slate-400 focus:border-[#1a50df] focus:ring-2 focus:ring-[#1a50df]/20"
+                        placeholder="naam@school.nl">
+                </div>
+
+                <div>
+                    <label for="password" class="mb-2 block text-sm font-semibold text-[#0b2a7a]">Wachtwoord</label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full rounded-xl border border-[#cfd8ea] bg-[#f7f9ff] px-4 py-3 text-[#0b2a7a] outline-none transition placeholder:text-slate-400 focus:border-[#1a50df] focus:ring-2 focus:ring-[#1a50df]/20"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit"
+                    class="btn-primary inline-flex w-full items-center justify-center rounded-xl px-6 py-3 text-lg font-semibold text-white transition">
+                    Inloggen
+                </button>
+            </form>
+
+        </div>
     </div>
 </section>
 
