@@ -1,6 +1,7 @@
 import { loadFragment } from './modules/fragmentLoader.js';
 import { loadLatestResults } from './modules/latestResults.js';
 import { loadStudentProgress, loadStudentaverage } from './modules/chartdisplay.js';
+import { loadStudentGoals } from './modules/keywordFilter.js';
 
 const API_BASE_URL = '/api/partial';
 const widgets = [
@@ -18,7 +19,7 @@ const widgets = [
     selectUrl: `/api/student/progress/subject`,
   },
   {
-    callback: 'fragment',
+    callback: 'loadStudentGoals',
     target: '#student-goals',
     refreshId: 'refresh-student-goals',
     url: `${API_BASE_URL}/student-goals`
@@ -70,7 +71,7 @@ const widgets = [
   },
 
   {
-    callback: 'fragment',
+    callback: 'loadStudentGoals',
     target: '#student-goals-individual',
     refreshId: 'refresh-student-goals-individual',
     url: `${API_BASE_URL}/student-goals/${new URL(window.location.href).pathname.split('/').pop()}`
@@ -82,6 +83,7 @@ const callbacks = new Map([
   ['loadLatestResults', loadLatestResults],
   ['loadStudentProgress', loadStudentProgress],
   ['loadStudentaverage', loadStudentaverage],
+  ['loadStudentGoals', loadStudentGoals],
   ['fragment', loadFragment]
 ])
 

@@ -1,7 +1,61 @@
+<!-- Filter / Sort controls -->
+{% if keywords %}
+<div class="flex flex-wrap items-center gap-3 mb-6">
+    <label class="text-sm font-semibold text-slate-600">Filter:</label>
+    <select id="keyword-filter" class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm">
+        <option value="all">Alle scores</option>
+        <option value="Sterk">Sterk</option>
+        <option value="Voldoende">Voldoende</option>
+        <option value="Zwak">Zwak</option>
+    </select>
+
+    <label class="text-sm font-semibold text-slate-600 ml-4">Sorteer:</label>
+    <select id="keyword-sort" class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm">
+        <option value="score-asc">Score (laag → hoog)</option>
+        <option value="score-desc">Score (hoog → laag)</option>
+        <option value="alpha">Alfabet (A → Z)</option>
+    </select>
+</div>
+
+<div id="keyword-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    {% for kw in keywords %}
+    <div class="keyword-card p-4 rounded-lg bg-slate-100 border border-slate-200"
+         data-score="{{ kw.score or '' }}"
+         data-numeric="{{ kw.score_numeric if kw.has_data else -1 }}"
+         data-topic="{{ kw.topic }}">
+        <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold text-base">{{ kw.topic }}</h4>
+            {% if kw.has_data and kw.score %}
+            <span class="badge {% if kw.score == 'Sterk' %}badge-success{% elif kw.score == 'Voldoende' %}badge-warning{% else %}badge-danger{% endif %}">
+                {{ kw.score }}
+            </span>
+            {% else %}
+            <span class="text-xs text-slate-400">Geen data</span>
+            {% endif %}
+        </div>
+        {% if kw.has_data %}
+        <div class="w-full bg-slate-200 rounded-full h-2 mb-2">
+            <div class="h-2 rounded-full {% if kw.score == 'Sterk' %}bg-green-500{% elif kw.score == 'Voldoende' %}bg-yellow-500{% else %}bg-red-500{% endif %}"
+                 style="width: {{ kw.score_numeric }}%"></div>
+        </div>
+        <p class="text-xs text-slate-500">{{ kw.score_numeric }}% &middot; {{ kw.goal_title }} &middot; {{ kw.subject }}</p>
+        {% else %}
+        <p class="text-xs text-slate-400">Geen data beschikbaar</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+
+{% else %}
+<p class="text-slate-500">Geen kernwoorden beschikbaar.</p>
+{% endif %}
+
+<!-- Leerdoelen per vak -->
 {% set subjects = progress | map(attribute='subject') | unique | list %}
 {% for subject in subjects %}
 <div class="card mb-6">
-    <details open>
+    <details>
         <summary class="cursor-pointer flex items-center justify-between pb-4 border-b border-slate-200">
             <h3 class="text-xl font-semibold">{{ subject }}</h3>
         </summary>

@@ -247,6 +247,50 @@ class Partial:
         datasets = _build_chart_datasets(bucketed_subjects, bucketed_labels)
         return {'labels': bucketed_labels, 'datasets': datasets}
 
+    def get_keyword_scores(self, user_id: int) -> list:
+        """Get all keywords with scores based on avg taxonomy_scores of all snapshots per learning goal."""
+        con = self.db.connect()
+        cur = con.cursor()
+
+        student_id = _resolve_student_id(cur, user_id)
+        if not student_id:
+            con.close()
+            return []
+
+        cur.execute("""
+            SELECT
+                k.keyword_id,
+                k.topic,
+                lg.learning_goal_id,
+                lg.title AS goal_title,
+                s.name AS subject_name,
+                AVG((ts.know + ts.can) / 2.0) AS avg_score
+            FROM keywords k
+            JOIN learning_goals lg ON lg.learning_goal_id = k.learning_goal_id
+            JOIN subjects s ON s.subject_id = lg.subject_id
+            JOIN snapshots snap ON snap.learning_goal_id = lg.learning_goal_id AND snap.student_id = ?
+            LEFT JOIN taxonomy_scores ts ON ts.snapshot_id = snap.snapshot_id
+            GROUP BY k.keyword_id
+            ORDER BY avg_score ASC
+        """, (student_id,))
+
+        results = []
+        for row in cur.fetchall():
+            avg = row['avg_score']
+            has_data = avg is not None
+            results.append({
+                'keyword_id': row['keyword_id'],
+                'topic': row['topic'],
+                'goal_title': row['goal_title'],
+                'subject': row['subject_name'],
+                'score': _score_to_label(avg) if has_data else None,
+                'score_numeric': round(avg * 100, 1) if has_data else None,
+                'has_data': has_data,
+            })
+
+        con.close()
+        return results
+
     def get_subjects_for_student(self, user_id: int) -> list:
         con = self.db.connect()
         cur = con.cursor()
