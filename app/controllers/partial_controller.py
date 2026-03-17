@@ -52,7 +52,8 @@ def render_student_goals_partial(db_path: str, student_user_id: int | None = Non
 
     partial_m = Partial(db_path)
     progress = partial_m.get_student_progress(user_id)
-    return render_template('partials/student_goals.html', progress=progress)
+    keywords = partial_m.get_keyword_scores(user_id)
+    return render_template('partials/student_goals.html', progress=progress, keywords=keywords)
 
 
 def get_student_progress_api(db_path: str):
