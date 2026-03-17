@@ -60,6 +60,22 @@ const widgets = [
     url: `${API_BASE_URL}/${new URL(window.location.href).pathname}/goals-progress`,
     selectUrl: `/api/${new URL(window.location.href).pathname}/goal`,
   },
+
+  {
+    callback: 'loadStudentProgress',
+    target: '#student-progress-individual',
+    refreshId: 'refresh-student-progress-individual',
+    url: `${API_BASE_URL}/student-progress/${new URL(window.location.href).pathname.split('/').pop()}`,
+    selectUrl: `/api/student/${new URL(window.location.href).pathname.split('/').pop()}/progress/subject`,
+  },
+
+  {
+    callback: 'fragment',
+    target: '#student-goals-individual',
+    refreshId: 'refresh-student-goals-individual',
+    url: `${API_BASE_URL}/student-goals/${new URL(window.location.href).pathname.split('/').pop()}`
+  },
+
 ]
 
 const callbacks = new Map([
