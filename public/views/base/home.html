@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="nl">
+
+{% include 'base/head.html' %}
+
+<body class="flex min-h-screen m-0 font-sans"
+    style="background-color: var(--color-background); color: var(--color-text);">
+
+    
+    <main class="flex-1 fixed top-0 h-screen w-screen  overflow-hidden">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'base/toasts.html' %}
+
+</body>
+
+</html>

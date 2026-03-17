@@ -1,16 +1,33 @@
-{% extends 'base/base.html' %}
+{% extends 'base/home.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
 
-<section class="max-w-2xl mx-auto text-center">
-    <h1 class="text-4xl font-bold mb-6">Welkom bij LeerDoelZicht</h1>
-    <p class="text-lg mb-8" style="color: var(--color-text-muted);">Krijg inzicht in je kennisvoortgang door toetsresultaten visueel te bekijken en gerichte adviezen te ontvangen.</p>
-    
-    <div class="space-x-4">
-        <a href="/login" class="btn-primary inline-block">
-            Inloggen
-        </a>
+<section class="min-h-screen overflow-hidden bg-[#e9edf5] px-6 py-12 md:px-10 md:py-16">
+    <div class="mx-auto max-w-6xl">
+        <div class="grid items-center gap-10 md:grid-cols-2">
+            <div class="text-[#0b2a7a]">
+                <p class="mb-4 inline-flex rounded-full border border-[#0b2a7a]/20 bg-white/60 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                    LeerDoelZicht
+                </p>
+                <h1 class="mb-5 text-4xl font-black leading-tight md:text-6xl">
+                    Van toetsresultaat <br> naar echte groei
+                </h1>
+                <p class="mb-8 max-w-xl text-2xl leading-relaxed text-[#0b2a7a]/90">
+                    Volg per leerdoel wat leerlingen weten, kunnen en durven, zodat je sneller ziet waar extra uitleg
+                    of verdieping nodig is.
+                </p>
+                <a href="/login" class="btn-primary text-center w-42 inline-flex justify-center items-center rounded-xl px-7 py-3 text-lg font-semibold">Inloggen </a>
+            </div>
+
+            <div aria-hidden class="relative h-[520px]">
+                <div class="absolute left-8 top-2 h-72 w-64 rounded-3xl bg-[#f5db16] shadow-lg"></div>
+                <div class="absolute right-2 top-24 h-80 w-52 rounded-3xl bg-[#3370f7] shadow-lg"></div>
+                <div class="absolute left-28 bottom-0 h-44 w-44 rounded-3xl bg-[#3eb85b] shadow-lg"></div>
+            </div>
+        </div>
     </div>
+
+    <div class="pointer-events-none absolute inset-x-0 bottom-[-120px] h-64 -rotate-3 bg-white/80"></div>
 </section>
 
 {% endblock %}

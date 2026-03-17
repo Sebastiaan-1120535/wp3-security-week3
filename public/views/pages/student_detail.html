@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+
+<h2 class="text-2xl font-semibold mb-6">{{ student['first_name'] }} {{ student['last_name'] }}</h2>
+
+<main class="grid gap-4 grid-cols-1  ">
+
+  <section class=" col-span-2">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Voortgang Over Tijd</h3>
+        <button type="button" id="refresh-student-progress-individual" class="btn-outline">Ververs</button>
+      </header>
+      <div id="student-progress-individual"></div>
+    </div>
+  </section>
+  
+  <section class="">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Laatste Resultaten</h3>
+        <button type="button" id="refresh-latest-results" class="btn-outline">Ververs</button>
+      </header>
+      <div id="latest-results"></div>
+    </div>
+  </section>
+  
+  <section class="col-span-3">
+    <div class="card">
+      <header class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-semibold">Leerdoelen</h3>
+        <button type="button" id="refresh-student-goals-individual" class="btn-outline">Ververs</button>
+      </header>
+      <div id="student-goals-individual"></div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}

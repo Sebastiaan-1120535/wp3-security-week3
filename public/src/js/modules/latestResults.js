@@ -37,8 +37,13 @@ async function fetchResults(container) {
     const isInitial = offset === 0;
     if (isInitial && loader) loader.classList.remove('hidden');
 
+    const isStudentPage = new URL(window.location.href).pathname.includes('/student/')
+
+    const student_id = Number(new URL(window.location.href).pathname.split('/').pop());
+    const baseurl = !isNaN(student_id) && isStudentPage ? `/api/student/${student_id}/recent-results` : '/api/student/recent-results';
+
     try {
-        const response = await fetch(`/api/student/recent-results?offset=${offset}&limit=${pageSize}`);
+        const response = await fetch(`${baseurl}?offset=${offset}&limit=${pageSize}`);
         if (!response.ok) {
             loading = false;
             return;
