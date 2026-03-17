@@ -50,8 +50,6 @@ def dashboard():
 def teachers_page():
     if not session.get('user'):
         return redirect(url_for('login'))
-    if session.get('role') != 'teacher':
-        return redirect(url_for('dashboard'))
     return render_template('pages/teachers.html')
 
 
@@ -59,10 +57,22 @@ def teachers_page():
 def students_page():
     if not session.get('user'):
         return redirect(url_for('login'))
-    if session.get('role') != 'student':
-        return redirect(url_for('dashboard'))
+    
     return render_template('pages/students.html')
 
+@app.route('/studenten/<int:student_id>')
+def view_student(student_id):   
+    if not session.get('user'):
+        return '', 401
+    if session.get('role') != 'teacher':
+        return '', 403
+    
+    student_m = Student(DB_PATH)
+    student = dict(student_m.find_by_id(student_id))
+
+    return render_template('pages/student_detail.html' , student=student)
+
+    
 @app.route('/class/<int:class_id>')
 def view_class(class_id):
 
@@ -101,8 +111,6 @@ def partials_users():
 def partials_teachers():
     if not session.get('user'):
         return '', 401
-    if session.get('role') != 'teacher':
-        return '', 403
     teacher_m = Teacher(DB_PATH)
     teachers = teacher_m.list_recent(limit=10)
     return render_template('partials/teacher_list.html', teachers=teachers)
@@ -247,12 +255,24 @@ def partial_latest_results():
         return '', 401
     return render_latest_results_partial(DB_PATH)
 
-
 @app.route('/api/student/recent-results')
 def recent_results():
     if not session.get('user'):
         return '', 401
     return get_recent_results_api(DB_PATH)
+
+@app.route('/api/student/<int:student_id>/recent-results/')
+def recent_results_individual(student_id):
+    if not session.get('user'):
+        return '', 401
+    
+    if session.get('role') != 'teacher':
+        return '', 403
+    
+    student_m = Student(DB_PATH)
+    student_id = student_m.find_by_id(student_id)["user_id"]
+    
+    return get_recent_results_api(DB_PATH, student_id)
 
 
 @app.route('/api/partial/student-progress')
@@ -261,6 +281,19 @@ def partial_student_progress():
         return '', 401
     return render_student_progress_partial(DB_PATH)
 
+@app.route('/api/partial/student-progress/<int:student_id>')
+def partial_student_progress_individual(student_id):
+    if not session.get('user'):
+        return '', 401
+    
+    if session.get('role') != 'teacher':
+        return '', 403
+    
+    student_m = Student(DB_PATH)
+    student_id = student_m.find_by_id(student_id)["user_id"]
+
+    return render_student_progress_partial(DB_PATH, student_id)
+
 
 @app.route('/api/partial/student-goals')
 def partial_student_goals():
@@ -268,6 +301,21 @@ def partial_student_goals():
         return '', 401
     return render_student_goals_partial(DB_PATH)
 
+
+@app.route('/api/partial/student-goals/<int:student_id>')
+def partial_student_goals_by_id(student_id):
+
+    if not session.get('user'):
+        return '', 401
+    
+    student_m = Student(DB_PATH)
+    user_id = student_m.find_by_id(student_id)['user_id']
+
+    if session.get('role') == 'student':
+        if not user_id or user_id != session.get('user_id'):
+            return '', 403
+        
+    return render_student_goals_partial(DB_PATH, user_id)
 
 @app.route('/api/student/progress')
 def student_progress():
@@ -281,6 +329,19 @@ def student_progress_by_subject(subject_id):
     if not session.get('user'):
         return '', 401
     return get_subject_progress_api(DB_PATH, subject_id)
+
+@app.route('/api/student/<int:student_id>/progress/subject/<int:subject_id>')
+def student_progress_by_subject_individual(student_id, subject_id):
+    if not session.get('user'):
+        return '', 401
+    
+    if session.get('role') != 'teacher':
+        return '', 403
+    
+    student_m = Student(DB_PATH)
+    user_id = student_m.find_by_id(student_id)['user_id']
+
+    return get_subject_progress_api(DB_PATH, subject_id, user_id)
 
 
 @app.route('/import', methods=['POST'])
