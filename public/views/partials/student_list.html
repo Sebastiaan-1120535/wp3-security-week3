@@ -1,70 +1,24 @@
-<table
-  class="w-full border-collapse"
-  style="background-color: var(--color-surface)"
->
-  <thead>
-    <tr>
-      <th
-        class="px-3 py-2 text-left"
-        style="
-          border-bottom: 1px solid var(--color-border);
-          background-color: var(--color-background);
-        "
-      >
-        ID
-      </th>
-      <th
-        class="px-3 py-2 text-left"
-        style="
-          border-bottom: 1px solid var(--color-border);
-          background-color: var(--color-background);
-        "
-      >
-        Naam
-      </th>
-      <th
-        class="px-3 py-2 text-left"
-        style="
-          border-bottom: 1px solid var(--color-border);
-          background-color: var(--color-background);
-        "
-      >
-        Achternaam
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for u in students %}
-    <tr>
-      <td
-        class="px-3 py-2 font-bold"
-        style="border-bottom: 1px solid var(--color-border)"
-      >
-        {{ u['student_id'] }}
-      </td>
-      <td
-        class="px-3 py-2"
-        style="border-bottom: 1px solid var(--color-border)"
-      >
-        {{ u['first_name'] }}
-      </td>
-      <td
-        class="px-3 py-2"
-        style="border-bottom: 1px solid var(--color-border)"
-      >
-        {{ u['last_name'] }}
-      </td>
-    </tr>
-    {% else %}
-    <tr>
-      <td
-        colspan="3"
-        class="px-3 py-2"
-        style="border-bottom: 1px solid var(--color-border)"
-      >
-        Geen gebruikers gevonden.
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="space-y-2">
+  {% for u in students %}
+  <div class="rounded-lg space-y-3 w-full border bg-gray-50 px-4 py-3" style="border-color: var(--color-border);">
+    <div class="flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <p class="font-medium truncate">{{ u['first_name'] }} {{ u['last_name'] }}</p>
+        <p class="text-xs text-slate-500">Student</p>
+      </div>
+    </div>
+
+    {% if session.get('role') == 'teacher' %}
+     
+      <a href="/studenten/{{ u['student_id'] }}" class="btn-primary text-sm">
+        Bekijk voortgang
+      </a>
+    {% endif %}
+
+  </div>
+  {% else %}
+  <div class="rounded-lg border border-border px-4 py-8 text-center text-slate-500">
+    Geen studenten gevonden.
+  </div>
+  {% endfor %}
+</div>
