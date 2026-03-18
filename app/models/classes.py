@@ -119,34 +119,41 @@ class Classes:
         return None
 
     def _get_goal_level_averages(self, cur, class_id: int, selected_goal_id: str, levels: list[dict]):
+        cur.execute(
+            '''SELECT
+                   ts.taxonomy_level_id,
+                   AVG(CAST(ts.can AS REAL)) AS avg_can,
+                   AVG(CAST(ts.know AS REAL)) AS avg_know,
+                   AVG(CAST(ts.confidence AS REAL)) AS avg_confidence
+               FROM "taxonomy_scores" ts
+               JOIN "snapshots" s ON s.snapshot_id = ts.snapshot_id
+               JOIN "students" st ON st.student_id = s.student_id
+               JOIN (
+                   SELECT student_id, learning_goal_id, MAX(snapshot_id) AS latest_snapshot_id
+                   FROM "snapshots"
+                   GROUP BY student_id, learning_goal_id
+               ) latest ON latest.latest_snapshot_id = s.snapshot_id
+               WHERE st.class_id = ?
+                 AND s.learning_goal_id = ?
+               GROUP BY ts.taxonomy_level_id''',
+            (class_id, selected_goal_id)
+        )
+        
+        score_rows = {
+            row['taxonomy_level_id']: row
+            for row in cur.fetchall()
+        }
+
         can_scores = []
         know_scores = []
         confidence_scores = []
 
         for level in levels:
-            cur.execute(
-                '''SELECT
-                       AVG(CAST(ts.can AS REAL)) AS avg_can,
-                       AVG(CAST(ts.know AS REAL)) AS avg_know,
-                       AVG(CAST(ts.confidence AS REAL)) AS avg_confidence
-                   FROM "taxonomy_scores" ts
-                   JOIN "snapshots" s ON s.snapshot_id = ts.snapshot_id
-                   JOIN "students" st ON st.student_id = s.student_id
-                   JOIN (
-                       SELECT student_id, learning_goal_id, MAX(snapshot_id) AS latest_snapshot_id
-                       FROM "snapshots"
-                       GROUP BY student_id, learning_goal_id
-                   ) latest ON latest.latest_snapshot_id = s.snapshot_id
-                   WHERE st.class_id = ?
-                     AND s.learning_goal_id = ?
-                     AND ts.taxonomy_level_id = ?''',
-                (class_id, selected_goal_id, level['taxonomy_level_id'])
-            )
-            score_row = cur.fetchone()
+            score_row = score_rows.get(level['taxonomy_level_id'])
 
-            can_scores.append(int(score_row['avg_can'] * 100))
-            know_scores.append(int(score_row['avg_know'] * 100))
-            confidence_scores.append(int(score_row['avg_confidence'] * 100))
+            can_scores.append(int(self._safe_float(score_row['avg_can'] if score_row else 0) * 100))
+            know_scores.append(int(self._safe_float(score_row['avg_know'] if score_row else 0) * 100))
+            confidence_scores.append(int(self._safe_float(score_row['avg_confidence'] if score_row else 0) * 100))
             
         return can_scores, know_scores, confidence_scores
 

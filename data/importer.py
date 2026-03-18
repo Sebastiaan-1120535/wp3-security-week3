@@ -577,7 +577,7 @@ class DataImporter:
                 """INSERT INTO taxonomy_scores
                     (know, can, confidence, snapshot_id, taxonomy_level_id)
                 VALUES (?, ?, ?, ?, ?)""",
-                (kennen, kunnen, confidence, snapshot_id, taxonomy_level_id),
+                (float(kennen), float(kunnen), float(confidence), snapshot_id, taxonomy_level_id),
             )
 
         return snapshot_id if snapshot_id else 0

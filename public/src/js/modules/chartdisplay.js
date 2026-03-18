@@ -76,6 +76,7 @@ function renderChart(canvas, chartData, type = 'line') {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            spanGaps: true,
             scales: {
                 x: {
                     stacked: true,
