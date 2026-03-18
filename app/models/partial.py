@@ -43,7 +43,7 @@ def _bucket_dates(sorted_dates: list, max_points: int = MAX_POINTS) -> list:
     return buckets
 
 
-def _bucket_chart_data(series: dict, sorted_dates: list) -> dict:
+def _bucket_chart_data(series: dict, sorted_dates: list) -> tuple[list, dict]:
     if len(sorted_dates) <= MAX_POINTS:
         return sorted_dates, series
 
@@ -75,13 +75,17 @@ def _build_chart_datasets(series: dict, labels: list) -> list:
     for i, (name, date_scores) in enumerate(series.items()):
         color = COLORS[i % len(COLORS)]
         data = [date_scores.get(d, None) for d in labels]
+        non_null_points = sum(1 for value in data if value is not None)
+        chart_type = 'bar' if non_null_points <= 1 else 'line'
         datasets.append({
             'label': name,
             'data': data,
             'borderColor': color,
             'backgroundColor': color,
             'tension': 0.3,
-            'fill': False
+            'fill': False,
+            'stack': 'combined',
+            'type': chart_type
         })
     return datasets
 
