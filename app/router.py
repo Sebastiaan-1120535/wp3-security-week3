@@ -119,8 +119,17 @@ def partials_teachers():
 def partials_student():
     if not session.get('user'):
         return '', 401
+    
     student_m = Student(DB_PATH)
-    student = student_m.list_recent(limit=10)
+    student = []
+    class_id = None
+
+    if session.get('role') == 'student':
+        student_data = student_m.find_by_user_id(session.get('user_id')) # type: ignore
+        class_id = student_data['class_id']
+
+    student = student_m.list_recent(limit=10, class_id=class_id)
+
     return render_template('partials/student_list.html', students=student)
 
 @app.route('/api/partial/classes')
